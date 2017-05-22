@@ -9,9 +9,27 @@ var Word = (function () {
     Word.prototype.toString = function () {
         return this._chars.join("");
     };
-    Word.prototype.equals = function (word) {
-        return this.toString().toLowerCase() === word.toLowerCase();
-    };
+    Object.defineProperty(Word.prototype, "direction", {
+        get: function () {
+            return this._direction;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Word.prototype, "coordinates", {
+        get: function () {
+            return this._coordinates;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Word.prototype, "chars", {
+        get: function () {
+            return this._chars.slice();
+        },
+        enumerable: true,
+        configurable: true
+    });
     return Word;
 }());
 exports.Word = Word;

@@ -10,7 +10,15 @@ export class Word {
         return this._chars.join("");
     }
 
-    equals(word:string) {
-        return this.toString().toLowerCase() === word.toLowerCase();
+    get direction() {
+        return this._direction;
+    }
+
+    get coordinates() {
+        return this._coordinates;
+    }
+
+    get chars() {
+        return this._chars.slice();
     }
 }

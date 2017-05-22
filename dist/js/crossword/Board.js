@@ -11,6 +11,7 @@ var Board = (function () {
         this._sizeX = 0;
         this._sizeY = 0;
         this._meta = [];
+        this.counter = 0;
         this._sizeY = this._board.length;
         for (var y = 0; y < this._board.length; y++) {
             this._sizeX = Math.max(this._sizeX, this._board[y].length);
@@ -52,12 +53,15 @@ var Board = (function () {
         enumerable: true,
         configurable: true
     });
-    // brute force lookup public api
+    /**
+     * Brute force lookup (public api)
+     * @param word
+     * @returns {any}
+     */
     Board.prototype.find = function (word) {
         // word must be at least 2 chars long
         if (!word.length || word.length < 2)
             return null;
-        // sanity check
         if (word.length > this.sizeX && word.length > this.sizeY)
             return null;
         var directions = [
@@ -74,12 +78,12 @@ var Board = (function () {
             for (var y = 0; y < this.sizeY; y++) {
                 for (var i = 0; i < directions.length; i++) {
                     var direction = directions[i];
-                    //console.log(x, y, direction);
-                    var found = this.getWord(x, y, word.length, direction);
-                    //console.log(x, y, word.length, direction, found);
-                    if (found && found.equals(word)) {
+                    this.counter++;
+                    //console.log(x, y, word.length, direction, word);
+                    // if there should be multiple matches, first always wins...
+                    var found = this.getWord(x, y, word.length, direction, word);
+                    if (found)
                         return found;
-                    }
                 }
             }
         }
@@ -99,10 +103,15 @@ var Board = (function () {
             throw new Error("Invalid start y (expected 0 - " + this.sizeY + ")");
         if (startX >= this.sizeX)
             throw new Error("Invalid start x (expected 0 - " + this.sizeX + ")");
-        var rx;
-        if (expectedMatch) {
-            rx = new RegExp("^" + Board._escapeRegex(expectedMatch), 'i');
-        }
+        var _escRgx = function (string) {
+            return (string + '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+        };
+        // early skip dead ends (if hint provided)
+        var _substrMatch = function (chars, expected) {
+            if (!expected)
+                return true;
+            return ((new RegExp("^" + _escRgx(chars.join("")), 'i')).test(expected));
+        };
         var coordinates = [];
         var chars = [];
         var y, x;
@@ -113,9 +122,8 @@ var Board = (function () {
                     if (!length || (chars.length < length)) {
                         chars.push(this._board[y][x_1]);
                         coordinates.push([x_1, y]);
-                        if (rx && !rx.test(chars.join(""))) {
+                        if (!_substrMatch(chars, expectedMatch))
                             return null;
-                        }
                     }
                 }
                 break;
@@ -125,8 +133,8 @@ var Board = (function () {
                     if (!length || (chars.length < length)) {
                         chars.push(this._board[y][x_2]);
                         coordinates.push([x_2, y]);
-                        if (rx && !rx.test(chars.join("")))
-                            return null; // early skip dead ends (if hint provided)
+                        if (!_substrMatch(chars, expectedMatch))
+                            return null;
                     }
                 }
                 break;
@@ -136,8 +144,8 @@ var Board = (function () {
                     if (!length || (chars.length < length)) {
                         chars.push(this._board[y_1][x]);
                         coordinates.push([x, y_1]);
-                        if (rx && !rx.test(chars.join("")))
-                            return null; // early skip dead ends (if hint provided)
+                        if (!_substrMatch(chars, expectedMatch))
+                            return null;
                     }
                 }
                 break;
@@ -147,8 +155,8 @@ var Board = (function () {
                     if (!length || (chars.length < length)) {
                         chars.push(this._board[y_2][x]);
                         coordinates.push([x, y_2]);
-                        if (rx && !rx.test(chars.join("")))
-                            return null; // early skip dead ends (if hint provided)
+                        if (!_substrMatch(chars, expectedMatch))
+                            return null;
                     }
                 }
                 break;
@@ -158,10 +166,11 @@ var Board = (function () {
                         if (!length || (chars.length < length)) {
                             chars.push(this._board[y_3][x_3]);
                             coordinates.push([x_3, y_3]);
-                            if (rx && !rx.test(chars.join("")))
-                                return null; // early skip dead ends (if hint provided)
-                            x_3++;
+                            if (!_substrMatch(chars, expectedMatch))
+                                return null;
                         }
+                        if (++x_3 >= this._sizeX)
+                            break;
                     }
                 }
                 break;
@@ -171,10 +180,11 @@ var Board = (function () {
                         if (!length || (chars.length < length)) {
                             chars.push(this._board[y_4][x_4]);
                             coordinates.push([x_4, y_4]);
-                            if (rx && !rx.test(chars.join("")))
-                                return null; // early skip dead ends (if hint provided)
-                            x_4--;
+                            if (!_substrMatch(chars, expectedMatch))
+                                return null;
                         }
+                        if (--x_4 < 0)
+                            break;
                     }
                 }
                 break;
@@ -184,10 +194,11 @@ var Board = (function () {
                         if (!length || (chars.length < length)) {
                             chars.push(this._board[y_5][x_5]);
                             coordinates.push([x_5, y_5]);
-                            if (rx && !rx.test(chars.join("")))
-                                return null; // early skip dead ends (if hint provided)
+                            if (!_substrMatch(chars, expectedMatch))
+                                return null;
                         }
-                        x_5++;
+                        if (++x_5 >= this._sizeX)
+                            break;
                     }
                 }
                 break;
@@ -197,10 +208,11 @@ var Board = (function () {
                         if (!length || (chars.length < length)) {
                             chars.push(this._board[y_6][x_6]);
                             coordinates.push([x_6, y_6]);
-                            if (rx && !rx.test(chars.join("")))
-                                return null; // early skip dead ends (if hint provided)
+                            if (!_substrMatch(chars, expectedMatch))
+                                return null;
                         }
-                        x_6--;
+                        if (--x_6 < 0)
+                            break;
                     }
                 }
                 break;
@@ -212,14 +224,6 @@ var Board = (function () {
             return null;
         }
         return new Word_1.Word(coordinates, chars, direction);
-    };
-    /**
-     * @param string
-     * @returns {string}
-     * @private
-     */
-    Board._escapeRegex = function (string) {
-        return (string + '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
     };
     return Board;
 }());

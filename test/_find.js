@@ -1,0 +1,36 @@
+"use strict";
+
+const fs = require('fs');
+const path = require('path');
+const assert = require('assert');
+const Board = require('../dist/js/crossword/Board').Board;
+const Crossword = require('../dist/js/crossword/Crossword').Crossword;
+
+module.exports = () => {
+
+    let found;
+    let data = JSON.parse(fs.readFileSync('../data/sample.json'));
+    let b = new Board(data.board);
+
+    found = b.find('car');
+    assert.equal(Crossword.DIRECTION_RIGHT, found.direction);
+    assert.equal(0, found.coordinates[0][0]);
+    assert.equal(0, found.coordinates[0][1]);
+
+    let data2 = JSON.parse(fs.readFileSync('../data/sample2.json'));
+    let b2 = new Board(data2.board);
+
+    [
+        "ancúg", "bandurky", "drabina", "džveredlo", "firštok", "gebuľa", "gruľa",
+        "kolimaž", "lajbík", "mačanka", "ocec", "pacerky", "rumkľa", "takoj", "vercajk"
+    ].forEach((w) => {
+        let found = b2.find(w);
+        //console.log(w, found);
+        assert(found);
+    });
+    //console.log(b2.counter);
+
+    //
+    console.log(`OK (${path.basename(__filename)})`);
+};
+

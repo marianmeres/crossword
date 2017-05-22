@@ -11,6 +11,8 @@ export class Board {
 
     protected _meta:any[][] = [];
 
+    public counter:number = 0;
+
     /**
      * @param _board
      */
@@ -51,12 +53,15 @@ export class Board {
         return JSON.parse(JSON.stringify(this._board));
     }
 
-    // brute force lookup public api
+    /**
+     * Brute force lookup (public api)
+     * @param word
+     * @returns {any}
+     */
     find(word:string) {
 
         // word must be at least 2 chars long
         if (!word.length || word.length < 2) return null;
-        // sanity check
         if (word.length > this.sizeX && word.length > this.sizeY) return null;
 
         let directions = [
@@ -74,12 +79,11 @@ export class Board {
             for (let y = 0; y < this.sizeY; y++) {
                 for (let i = 0; i < directions.length; i++) {
                     let direction = directions[i];
-                    //console.log(x, y, direction);
-                    let found = this.getWord(x, y, word.length, direction);
-                    //console.log(x, y, word.length, direction, found);
-                    if (found && found.equals(word)) {
-                        return found;
-                    }
+                    this.counter++;
+                    //console.log(x, y, word.length, direction, word);
+                    // if there should be multiple matches, first always wins...
+                    let found = this.getWord(x, y, word.length, direction, word);
+                    if (found) return found;
                 }
             }
         }
@@ -100,10 +104,16 @@ export class Board {
         if (startY >= this.sizeY) throw new Error(`Invalid start y (expected 0 - ${this.sizeY})`);
         if (startX >= this.sizeX) throw new Error(`Invalid start x (expected 0 - ${this.sizeX})`);
 
-        let rx;
-        if (expectedMatch) {
-            rx = new RegExp(`^${Board._escapeRegex(expectedMatch)}`, 'i');
-        }
+        let _escRgx = (string:string):string => {
+            return (string + '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+        };
+        // early skip dead ends (if hint provided)
+        let _substrMatch = (chars:string[], expected):boolean => {
+            if (!expected) return true;
+            return (
+                (new RegExp(`^${_escRgx(chars.join(""))}`, 'i')).test(expected)
+            )
+        };
 
         let coordinates = [];
         let chars = [];
@@ -117,9 +127,7 @@ export class Board {
                     if (!length || (chars.length < length)) {
                         chars.push(this._board[y][x]);
                         coordinates.push([x, y]);
-                        if (rx && !rx.test(chars.join(""))) { // early skip dead ends (if hint provided)
-                            return null;
-                        }
+                        if (!_substrMatch(chars, expectedMatch)) return null;
                     }
                 }
                 break;
@@ -130,7 +138,7 @@ export class Board {
                     if (!length || (chars.length < length)) {
                         chars.push(this._board[y][x]);
                         coordinates.push([x, y]);
-                        if (rx && !rx.test(chars.join(""))) return null; // early skip dead ends (if hint provided)
+                        if (!_substrMatch(chars, expectedMatch)) return null;
                     }
                 }
                 break;
@@ -141,7 +149,7 @@ export class Board {
                     if (!length || (chars.length < length)) {
                         chars.push(this._board[y][x]);
                         coordinates.push([x, y]);
-                        if (rx && !rx.test(chars.join(""))) return null; // early skip dead ends (if hint provided)
+                        if (!_substrMatch(chars, expectedMatch)) return null;
                     }
                 }
                 break;
@@ -152,7 +160,7 @@ export class Board {
                     if (!length || (chars.length < length)) {
                         chars.push(this._board[y][x]);
                         coordinates.push([x, y]);
-                        if (rx && !rx.test(chars.join(""))) return null; // early skip dead ends (if hint provided)
+                        if (!_substrMatch(chars, expectedMatch)) return null;
                     }
                 }
                 break;
@@ -163,9 +171,9 @@ export class Board {
                         if (!length || (chars.length < length)) {
                             chars.push(this._board[y][x]);
                             coordinates.push([x, y]);
-                            if (rx && !rx.test(chars.join(""))) return null; // early skip dead ends (if hint provided)
-                            x++;
+                            if (!_substrMatch(chars, expectedMatch)) return null;
                         }
+                        if (++x >= this._sizeX) break;
                     }
                 }
                 break;
@@ -176,9 +184,9 @@ export class Board {
                         if (!length || (chars.length < length)) {
                             chars.push(this._board[y][x]);
                             coordinates.push([x, y]);
-                            if (rx && !rx.test(chars.join(""))) return null; // early skip dead ends (if hint provided)
-                            x--;
+                            if (!_substrMatch(chars, expectedMatch)) return null;
                         }
+                        if (--x < 0) break;
                     }
                 }
                 break;
@@ -189,9 +197,9 @@ export class Board {
                         if (!length || (chars.length < length)) {
                             chars.push(this._board[y][x]);
                             coordinates.push([x, y]);
-                            if (rx && !rx.test(chars.join(""))) return null; // early skip dead ends (if hint provided)
+                            if (!_substrMatch(chars, expectedMatch)) return null;
                         }
-                        x++;
+                        if (++x >= this._sizeX) break;
                     }
                 }
                 break;
@@ -202,9 +210,9 @@ export class Board {
                         if (!length || (chars.length < length)) {
                             chars.push(this._board[y][x]);
                             coordinates.push([x, y]);
-                            if (rx && !rx.test(chars.join(""))) return null; // early skip dead ends (if hint provided)
+                            if (!_substrMatch(chars, expectedMatch)) return null;
                         }
-                        x--;
+                        if (--x < 0) break;
                     }
                 }
                 break;
@@ -219,15 +227,5 @@ export class Board {
         }
 
         return new Word(coordinates, chars, direction);
-    }
-
-
-    /**
-     * @param string
-     * @returns {string}
-     * @private
-     */
-    static _escapeRegex(string:string):string {
-        return (string + '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
     }
 }
