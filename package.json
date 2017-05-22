@@ -1,0 +1,22 @@
+{
+  "name": "crossword",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.64",
+    "mocha": "^3.4.1"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.speedweb.sk:marianmeres/crossword.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
