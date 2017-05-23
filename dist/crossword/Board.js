@@ -17,7 +17,6 @@ var Board = (function () {
             this._sizeX = Math.max(this._sizeX, this._board[y].length);
         }
         for (var y = 0; y < this._board.length; y++) {
-            var row = this._board[y];
             this._meta[y] = this._meta[y] || [];
             for (var x = 0; x < this._sizeX; x++) {
                 this._meta[y][x] = {};
@@ -26,9 +25,6 @@ var Board = (function () {
                     this._board[y][x] = null;
                 }
             }
-            // for (let x = row.length; x < this._sizeX; x++) {
-            //     this._board[y][x] = null;
-            // }
         }
     }
     Object.defineProperty(Board.prototype, "sizeX", {
@@ -110,7 +106,7 @@ var Board = (function () {
         var _substrMatch = function (chars, expected) {
             if (!expected)
                 return true;
-            return ((new RegExp("^" + _escRgx(chars.join("")), 'i')).test(expected));
+            return (new RegExp("^" + _escRgx(chars.join("")), 'i')).test(expected);
         };
         var coordinates = [];
         var chars = [];
@@ -136,6 +132,8 @@ var Board = (function () {
                         if (!_substrMatch(chars, expectedMatch))
                             return null;
                     }
+                    else
+                        break;
                 }
                 break;
             case Crossword_1.Crossword.DIRECTION_BOTTOM:
@@ -147,6 +145,8 @@ var Board = (function () {
                         if (!_substrMatch(chars, expectedMatch))
                             return null;
                     }
+                    else
+                        break;
                 }
                 break;
             case Crossword_1.Crossword.DIRECTION_TOP:
@@ -158,6 +158,8 @@ var Board = (function () {
                         if (!_substrMatch(chars, expectedMatch))
                             return null;
                     }
+                    else
+                        break;
                 }
                 break;
             case Crossword_1.Crossword.DIRECTION_TOP_RIGHT:
@@ -169,6 +171,8 @@ var Board = (function () {
                             if (!_substrMatch(chars, expectedMatch))
                                 return null;
                         }
+                        else
+                            break;
                         if (++x_3 >= this._sizeX)
                             break;
                     }
@@ -183,6 +187,8 @@ var Board = (function () {
                             if (!_substrMatch(chars, expectedMatch))
                                 return null;
                         }
+                        else
+                            break;
                         if (--x_4 < 0)
                             break;
                     }
@@ -197,6 +203,8 @@ var Board = (function () {
                             if (!_substrMatch(chars, expectedMatch))
                                 return null;
                         }
+                        else
+                            break;
                         if (++x_5 >= this._sizeX)
                             break;
                     }
@@ -211,6 +219,8 @@ var Board = (function () {
                             if (!_substrMatch(chars, expectedMatch))
                                 return null;
                         }
+                        else
+                            break;
                         if (--x_6 < 0)
                             break;
                     }
@@ -223,7 +233,7 @@ var Board = (function () {
         if (length && chars.length !== length) {
             return null;
         }
-        return new Word_1.Word(coordinates, chars, direction);
+        return new Word_1.Word(chars, coordinates);
     };
     return Board;
 }());

@@ -2,12 +2,12 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
-const Board = require('../dist/js/crossword/Board').Board;
-const Crossword = require('../dist/js/crossword/Crossword').Crossword;
+const Board = require('../dist/crossword/Board').Board;
+const Crossword = require('../dist/crossword/Crossword').Crossword;
 
 module.exports = () => {
 
-    let data = JSON.parse(fs.readFileSync('../data/sample.json'));
+    let data = JSON.parse(fs.readFileSync(path.join(__dirname, './_data/sample.json')));
     let b = new Board(data.board);
 
     assert.strictEqual(3, b.sizeX);

@@ -1,17 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Word = (function () {
-    function Word(_coordinates, _chars, _direction) {
-        this._coordinates = _coordinates;
+    function Word(_chars, _coordinates) {
         this._chars = _chars;
-        this._direction = _direction;
+        this._coordinates = _coordinates;
+        if (this._chars.length < 2) {
+            throw new Error("Word must be at least 2 chars long");
+        }
+        if (this._coordinates.length !== this._chars.length) {
+            throw new Error("Chars and coordinates mismatch");
+        }
     }
     Word.prototype.toString = function () {
         return this._chars.join("");
     };
     Object.defineProperty(Word.prototype, "direction", {
         get: function () {
-            return this._direction;
+            return 'todo';
         },
         enumerable: true,
         configurable: true

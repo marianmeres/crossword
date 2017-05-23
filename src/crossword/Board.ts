@@ -8,7 +8,6 @@ export class Board {
 
     protected _sizeX:number = 0;
     protected _sizeY:number = 0;
-
     protected _meta:any[][] = [];
 
     public counter:number = 0;
@@ -16,7 +15,7 @@ export class Board {
     /**
      * @param _board
      */
-    constructor(protected _board:string[][]) { // , words:string[]
+    constructor(protected _board:string[][]) {
 
         this._sizeY = this._board.length;
         for (let y = 0; y < this._board.length; y++) {
@@ -24,7 +23,6 @@ export class Board {
         }
 
         for (let y = 0; y < this._board.length; y++) {
-            let row = this._board[y];
             this._meta[y] = this._meta[y] || [];
             for (let x = 0; x < this._sizeX; x++) {
                 this._meta[y][x] = {};
@@ -34,9 +32,6 @@ export class Board {
                     this._board[y][x] = null;
                 }
             }
-            // for (let x = row.length; x < this._sizeX; x++) {
-            //     this._board[y][x] = null;
-            // }
         }
     }
 
@@ -110,9 +105,7 @@ export class Board {
         // early skip dead ends (if hint provided)
         let _substrMatch = (chars:string[], expected):boolean => {
             if (!expected) return true;
-            return (
-                (new RegExp(`^${_escRgx(chars.join(""))}`, 'i')).test(expected)
-            )
+            return  (new RegExp(`^${_escRgx(chars.join(""))}`, 'i')).test(expected);
         };
 
         let coordinates = [];
@@ -139,7 +132,7 @@ export class Board {
                         chars.push(this._board[y][x]);
                         coordinates.push([x, y]);
                         if (!_substrMatch(chars, expectedMatch)) return null;
-                    }
+                    } else break;
                 }
                 break;
 
@@ -150,7 +143,7 @@ export class Board {
                         chars.push(this._board[y][x]);
                         coordinates.push([x, y]);
                         if (!_substrMatch(chars, expectedMatch)) return null;
-                    }
+                    } else break;
                 }
                 break;
 
@@ -161,7 +154,7 @@ export class Board {
                         chars.push(this._board[y][x]);
                         coordinates.push([x, y]);
                         if (!_substrMatch(chars, expectedMatch)) return null;
-                    }
+                    } else break;
                 }
                 break;
 
@@ -172,7 +165,7 @@ export class Board {
                             chars.push(this._board[y][x]);
                             coordinates.push([x, y]);
                             if (!_substrMatch(chars, expectedMatch)) return null;
-                        }
+                        } else break;
                         if (++x >= this._sizeX) break;
                     }
                 }
@@ -185,7 +178,7 @@ export class Board {
                             chars.push(this._board[y][x]);
                             coordinates.push([x, y]);
                             if (!_substrMatch(chars, expectedMatch)) return null;
-                        }
+                        } else break;
                         if (--x < 0) break;
                     }
                 }
@@ -198,7 +191,7 @@ export class Board {
                             chars.push(this._board[y][x]);
                             coordinates.push([x, y]);
                             if (!_substrMatch(chars, expectedMatch)) return null;
-                        }
+                        } else break;
                         if (++x >= this._sizeX) break;
                     }
                 }
@@ -211,7 +204,7 @@ export class Board {
                             chars.push(this._board[y][x]);
                             coordinates.push([x, y]);
                             if (!_substrMatch(chars, expectedMatch)) return null;
-                        }
+                        } else break;
                         if (--x < 0) break;
                     }
                 }
@@ -226,6 +219,6 @@ export class Board {
             return null;
         }
 
-        return new Word(coordinates, chars, direction);
+        return new Word(chars, coordinates);
     }
 }
