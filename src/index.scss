@@ -1,0 +1,11 @@
+@import "_sass/_shared.scss";
+
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
+@import "../node_modules/bootstrap/scss/reboot";
+
+body {
+  margin: 0;
+  padding: 1em;
+  height: 100vh;
+}

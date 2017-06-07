@@ -1,5 +1,5 @@
 
-export class Crossword {
+export default class Crossword {
 
     static readonly DIRECTION_TOP = 'top';
     static readonly DIRECTION_TOP_RIGHT = 'top_right';

@@ -1,21 +1,18 @@
-
-import {Crossword} from "./Crossword";
-import {Word} from "./Word";
-
-
+import Crossword from './Crossword';
+import Word from './Word';
 
 export class Board {
 
-    protected _sizeX:number = 0;
-    protected _sizeY:number = 0;
-    protected _meta:any[][] = [];
+    protected _sizeX: number = 0;
+    protected _sizeY: number = 0;
+    protected _meta: any[][] = [];
 
-    public counter:number = 0;
+    public counter: number = 0;
 
     /**
      * @param _board
      */
-    constructor(protected _board:string[][]) {
+    constructor(protected _board: string[][]) {
 
         this._sizeY = this._board.length;
         for (let y = 0; y < this._board.length; y++) {
@@ -53,11 +50,11 @@ export class Board {
      * @param word
      * @returns {any}
      */
-    find(word:string) {
+    find(word: string) {
 
         // word must be at least 2 chars long
-        if (!word.length || word.length < 2) return null;
-        if (word.length > this.sizeX && word.length > this.sizeY) return null;
+        if (!word.length || word.length < 2) { return null; }
+        if (word.length > this.sizeX && word.length > this.sizeY) { return null; }
 
         let directions = [
             Crossword.DIRECTION_TOP,
@@ -75,10 +72,10 @@ export class Board {
                 for (let i = 0; i < directions.length; i++) {
                     let direction = directions[i];
                     this.counter++;
-                    //console.log(x, y, word.length, direction, word);
+                    // console.log(x, y, word.length, direction, word);
                     // if there should be multiple matches, first always wins...
                     let found = this.getWord(x, y, word.length, direction, word);
-                    if (found) return found;
+                    if (found) { return found; }
                 }
             }
         }
@@ -95,17 +92,17 @@ export class Board {
      * @param expectedMatch
      * @returns {any}
      */
-    getWord(startX:number, startY:number, length:number, direction:string, expectedMatch?:string) {
-        if (startY >= this.sizeY) throw new Error(`Invalid start y (expected 0 - ${this.sizeY})`);
-        if (startX >= this.sizeX) throw new Error(`Invalid start x (expected 0 - ${this.sizeX})`);
+    getWord(startX: number, startY: number, length: number, direction: string, expectedMatch?: string) {
+        if (startY >= this.sizeY) { throw new Error(`Invalid start y (expected 0 - ${this.sizeY})`); }
+        if (startX >= this.sizeX) { throw new Error(`Invalid start x (expected 0 - ${this.sizeX})`); }
 
-        let _escRgx = (string:string):string => {
-            return (string + '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+        let _escRgx = (str: string): string => {
+            return (str + '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
         };
         // early skip dead ends (if hint provided)
-        let _substrMatch = (chars:string[], expected):boolean => {
-            if (!expected) return true;
-            return  (new RegExp(`^${_escRgx(chars.join(""))}`, 'i')).test(expected);
+        let _substrMatch = (chars: string[], expected): boolean => {
+            if (!expected) { return true; }
+            return  (new RegExp(`^${_escRgx(chars.join(''))}`, 'i')).test(expected);
         };
 
         let coordinates = [];
@@ -116,96 +113,96 @@ export class Board {
 
             case Crossword.DIRECTION_RIGHT:
                 y = startY;
-                for (let x = startX; x < this._sizeX; x++) {
+                for (x = startX; x < this._sizeX; x++) {
                     if (!length || (chars.length < length)) {
                         chars.push(this._board[y][x]);
                         coordinates.push([x, y]);
-                        if (!_substrMatch(chars, expectedMatch)) return null;
+                        if (!_substrMatch(chars, expectedMatch)) { return null; }
                     }
                 }
                 break;
 
             case Crossword.DIRECTION_LEFT:
                 y = startY;
-                for (let x = startX; x >= 0; x--) {
+                for (x = startX; x >= 0; x--) {
                     if (!length || (chars.length < length)) {
                         chars.push(this._board[y][x]);
                         coordinates.push([x, y]);
-                        if (!_substrMatch(chars, expectedMatch)) return null;
-                    } else break;
+                        if (!_substrMatch(chars, expectedMatch)) { return null; }
+                    } else { break; }
                 }
                 break;
 
             case Crossword.DIRECTION_BOTTOM:
                 x = startX;
-                for (let y = startY; y < this._sizeY; y++) {
+                for (y = startY; y < this._sizeY; y++) {
                     if (!length || (chars.length < length)) {
                         chars.push(this._board[y][x]);
                         coordinates.push([x, y]);
-                        if (!_substrMatch(chars, expectedMatch)) return null;
-                    } else break;
+                        if (!_substrMatch(chars, expectedMatch)) { return null; }
+                    } else { break; }
                 }
                 break;
 
             case Crossword.DIRECTION_TOP:
                 x = startX;
-                for (let y = startY; y >= 0; y--) {
+                for (y = startY; y >= 0; y--) {
                     if (!length || (chars.length < length)) {
                         chars.push(this._board[y][x]);
                         coordinates.push([x, y]);
-                        if (!_substrMatch(chars, expectedMatch)) return null;
-                    } else break;
+                        if (!_substrMatch(chars, expectedMatch)) { return null; }
+                    } else { break; }
                 }
                 break;
 
             case Crossword.DIRECTION_TOP_RIGHT:
-                for (let x = startX; x < this._sizeX; x++) {
-                    for (let y = startY; y >= 0; y--) {
+                for (x = startX; x < this._sizeX; x++) {
+                    for (y = startY; y >= 0; y--) {
                         if (!length || (chars.length < length)) {
                             chars.push(this._board[y][x]);
                             coordinates.push([x, y]);
-                            if (!_substrMatch(chars, expectedMatch)) return null;
-                        } else break;
-                        if (++x >= this._sizeX) break;
+                            if (!_substrMatch(chars, expectedMatch)) { return null; }
+                        } else { break; }
+                        if (++x >= this._sizeX) { break; }
                     }
                 }
                 break;
 
             case Crossword.DIRECTION_TOP_LEFT:
-                for (let x = startX; x >= 0; x--) {
-                    for (let y = startY; y >= 0; y--) {
+                for (x = startX; x >= 0; x--) {
+                    for (y = startY; y >= 0; y--) {
                         if (!length || (chars.length < length)) {
                             chars.push(this._board[y][x]);
                             coordinates.push([x, y]);
-                            if (!_substrMatch(chars, expectedMatch)) return null;
-                        } else break;
-                        if (--x < 0) break;
+                            if (!_substrMatch(chars, expectedMatch)) { return null; }
+                        } else { break; }
+                        if (--x < 0) { break; }
                     }
                 }
                 break;
 
             case Crossword.DIRECTION_BOTTOM_RIGHT:
-                for (let x = startX; x < this._sizeX; x++) {
-                    for (let y = startY; y < this._sizeY; y++) {
+                for (x = startX; x < this._sizeX; x++) {
+                    for (y = startY; y < this._sizeY; y++) {
                         if (!length || (chars.length < length)) {
                             chars.push(this._board[y][x]);
                             coordinates.push([x, y]);
-                            if (!_substrMatch(chars, expectedMatch)) return null;
-                        } else break;
-                        if (++x >= this._sizeX) break;
+                            if (!_substrMatch(chars, expectedMatch)) { return null; }
+                        } else { break; }
+                        if (++x >= this._sizeX) { break; }
                     }
                 }
                 break;
 
             case Crossword.DIRECTION_BOTTOM_LEFT:
-                for (let x = startX; x >= 0; x--) {
-                    for (let y = startY; y < this._sizeY; y++) {
+                for (x = startX; x >= 0; x--) {
+                    for (y = startY; y < this._sizeY; y++) {
                         if (!length || (chars.length < length)) {
                             chars.push(this._board[y][x]);
                             coordinates.push([x, y]);
-                            if (!_substrMatch(chars, expectedMatch)) return null;
-                        } else break;
-                        if (--x < 0) break;
+                            if (!_substrMatch(chars, expectedMatch)) { return null; }
+                        } else { break; }
+                        if (--x < 0) { break; }
                     }
                 }
                 break;
