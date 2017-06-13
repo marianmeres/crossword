@@ -26,5 +26,7 @@
 
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
-  }
+  },
+
+  "homepage" : "http://marian.meres.sk/crossword/build/"
 }
