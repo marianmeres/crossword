@@ -1,0 +1,7 @@
+@import "../../_sass/shared";
+
+.#{$bemNs}-root {
+  padding: 1em;
+  height: 100vh;
+  @include flexrow-container;
+}

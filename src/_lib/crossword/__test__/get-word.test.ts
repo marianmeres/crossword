@@ -1,11 +1,12 @@
 import {Board} from '../Board';
 import Crossword from '../Crossword';
+import Word from '../Word';
 
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
 
-describe('Board.getWord', () => {
+describe('Brute force: Board.getWord', () => {
 
     let data = JSON.parse(fs.readFileSync(path.join(__dirname, './_data/sample.json')));
     let b = new Board(data.board);
@@ -77,4 +78,106 @@ describe('Board.getWord', () => {
         assert.equal('ai', b.getWord(2, 1, 2, Crossword.DIRECTION_BOTTOM_LEFT).toString());
         assert.equal(null, b.getWord(0, 1, 2, Crossword.DIRECTION_BOTTOM_LEFT));
     });
+});
+
+describe('Word', () => {
+    let data = JSON.parse(fs.readFileSync(path.join(__dirname, './_data/sample.json')));
+    let b = new Board(data.board);
+
+    it('coordinates DIRECTION_RIGHT', () => {
+        let word = b.getWord(0, 0, 3, Crossword.DIRECTION_RIGHT);
+        expect(word.coordinates).toEqual([ [0, 0], [1, 0], [2, 0]]);
+        expect(word.direction).toEqual(Crossword.DIRECTION_RIGHT);
+
+        // tar
+        expect(
+            b.getWord(0, 2, 3, Crossword.DIRECTION_TOP_RIGHT).direction
+        ).toEqual(Crossword.DIRECTION_TOP_RIGHT);
+    });
+
+    it('coordinates DIRECTION_LEFT', () => {
+        // rac
+        expect(
+            b.getWord(2, 0, 3, Crossword.DIRECTION_LEFT).direction
+        ).toEqual(Crossword.DIRECTION_LEFT);
+    });
+
+    it('coordinates DIRECTION_BOTTOM', () => {
+        // cat
+        expect(
+            b.getWord(0, 0, 3, Crossword.DIRECTION_BOTTOM).direction
+        ).toEqual(Crossword.DIRECTION_BOTTOM);
+    });
+
+    it('coordinates DIRECTION_TOP', () => {
+        // tac
+        expect(
+            b.getWord(0, 2, 3, Crossword.DIRECTION_TOP).direction
+        ).toEqual(Crossword.DIRECTION_TOP);
+    });
+
+    it('coordinates DIRECTION_TOP_RIGHT', () => {
+        // tar
+        expect(
+            b.getWord(0, 2, 3, Crossword.DIRECTION_TOP_RIGHT).direction
+        ).toEqual(Crossword.DIRECTION_TOP_RIGHT);
+    });
+
+    it('coordinates DIRECTION_TOP_LEFT', () => {
+        // mac
+        expect(
+            b.getWord(2, 2, 3, Crossword.DIRECTION_TOP_LEFT).direction
+        ).toEqual(Crossword.DIRECTION_TOP_LEFT);
+    });
+
+    it('coordinates DIRECTION_BOTTOM_RIGHT', () => {
+        // cam
+        expect(
+            b.getWord(0, 0, 3, Crossword.DIRECTION_BOTTOM_RIGHT).direction
+        ).toEqual(Crossword.DIRECTION_BOTTOM_RIGHT);
+    });
+
+    it('coordinates DIRECTION_BOTTOM_LEFT', () => {
+        // rat
+        expect(
+            b.getWord(2, 0, 3, Crossword.DIRECTION_BOTTOM_LEFT).direction
+        ).toEqual(Crossword.DIRECTION_BOTTOM_LEFT);
+    });
+
+});
+
+describe('Mark word', () => {
+    let data = JSON.parse(fs.readFileSync(path.join(__dirname, './_data/sample.json')));
+    let b = new Board(data.board);
+
+    it('returns false if word is not found', () => {
+        let result = b.markWord(new Word(['a', 'a'], [[0, 0], [0, 1]]));
+        expect(result).toBeFalsy();
+    });
+
+    it('it works when word is found', () => {
+        let result = b.markWord(b.getWord(0, 0, 3, Crossword.DIRECTION_RIGHT));
+        expect(result).toBeTruthy();
+
+        b.markWord(b.getWord(0, 0, 3, Crossword.DIRECTION_BOTTOM));
+
+        // tieto dve maju rovnake marky
+        b.markWord(b.find('mac'));
+        b.markWord(b.find('cam'));
+
+        let marks = b.marks;
+
+        expect(marks.car).toBeInstanceOf(Word);
+        expect(marks.cat).toBeInstanceOf(Word);
+        expect(marks.cam).toBeInstanceOf(Word);
+        expect(marks.mac).toBeInstanceOf(Word);
+
+        let coords = b.getAllMarkedCoordinates();
+        expect(coords).toEqual([
+            [ 1, 1, 1 ],
+            [ 1, 1, 0 ],
+            [ 1, 0, 1 ]
+        ]);
+    });
+
 });

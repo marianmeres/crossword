@@ -1,0 +1,24 @@
+@import "../../_sass/shared";
+
+.#{$bemNs}-board {
+
+  background: #efefef;
+
+  &-table {
+    table-layout: fixed;
+
+    td {
+      line-height: 1;
+      text-align: center;
+      padding: .75em;
+      text-transform: uppercase;
+      border: 1px solid gray;
+      font-size: 1.1em;
+      font-weight: bold;
+
+      &._marked {
+        background: #ffc;
+      }
+    }
+  }
+}

@@ -57,7 +57,7 @@
         "one-line": [
             true,
             "check-catch",
-            "check-else",
+            // "check-else",
             "check-open-brace",
             "check-whitespace"
         ],

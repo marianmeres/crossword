@@ -1,13 +1,20 @@
 import Crossword from './Crossword';
 import Word from './Word';
 
+interface Marks {
+    [index: string]: Word;
+}
+
 export class Board {
 
     protected _sizeX: number = 0;
     protected _sizeY: number = 0;
     protected _meta: any[][] = [];
 
+    // brute force counter (for debug only)
     public counter: number = 0;
+
+    protected _marks: Marks = {};
 
     /**
      * @param _board
@@ -43,6 +50,10 @@ export class Board {
     // quick and dirty internal data clone
     get board() {
         return JSON.parse(JSON.stringify(this._board));
+    }
+
+    clone() {
+        return new Board(this.board);
     }
 
     /**
@@ -93,6 +104,7 @@ export class Board {
      * @returns {any}
      */
     getWord(startX: number, startY: number, length: number, direction: string, expectedMatch?: string) {
+
         if (startY >= this.sizeY) { throw new Error(`Invalid start y (expected 0 - ${this.sizeY})`); }
         if (startX >= this.sizeX) { throw new Error(`Invalid start x (expected 0 - ${this.sizeX})`); }
 
@@ -217,5 +229,55 @@ export class Board {
         }
 
         return new Word(chars, coordinates);
+    }
+
+    /**
+     * @param word
+     * @returns {boolean}
+     */
+    markWord(word: Word) {
+        // verify first
+        let c = word.coordinates;
+        let w = this.getWord(c[0][0], c[0][1], c.length, word.direction);
+
+        // quick-n-dirty...
+        if (w.coordinates.length !== word.coordinates.length
+            || w.coordinates.join('') !== word.coordinates.join('')
+            || w.toString() !== word.toString()) {
+            return false;
+        }
+
+        this._marks[word.toString()] = word;
+
+        return true;
+    }
+
+    /**
+     * @returns {Marks}
+     */
+    get marks() {
+        return this._marks;
+    }
+
+    getAllMarkedCoordinates() {
+        let marked = [];
+
+        // initialize empty board
+        for (let y = 0; y < this._board.length; y++) {
+            marked[y] = marked[y] || [];
+            for (let x = 0; x < this._sizeX; x++) {
+                marked[y][x] = 0;
+            }
+        }
+
+        // loop over marks...
+        Object.keys(this._marks).forEach((key) => {
+            let w: Word = this._marks[key];
+            w.coordinates.forEach((pair) => {
+                marked[pair[1]][pair[0]] = 1;
+            });
+        });
+
+        return marked;
     }
 }
