@@ -53,7 +53,16 @@ export class Board {
     }
 
     clone() {
-        return new Board(this.board);
+        let board = new Board(this.board);
+        board._marks = this._marks;
+        return board;
+    }
+
+    charAt(x, y) {
+        if (this._board[y] && this._board[y][x]) {
+            return this._board[y][x];
+        }
+        return null;
     }
 
     /**
@@ -236,20 +245,44 @@ export class Board {
      * @returns {boolean}
      */
     markWord(word: Word) {
-        // verify first
+        if (!this._isValidWord(word)) { return false; }
+        this._marks[word.toString()] = word;
+        return true;
+    }
+
+    /**
+     * @param word
+     * @returns {boolean}
+     */
+    unMarkWord(word: Word) {
+        if (!this._isValidWord(word)) { return false; }
+        delete this._marks[word.toString()];
+        return true;
+    }
+
+    /**
+     * @param wordOrString
+     * @returns {boolean}
+     */
+    isMarked(wordOrString) {
+        return !!this._marks[wordOrString.toString()];
+    }
+
+    /**
+     * @param word
+     * @returns {boolean}
+     * @private
+     */
+    _isValidWord(word: Word) {
         let c = word.coordinates;
         let w = this.getWord(c[0][0], c[0][1], c.length, word.direction);
 
         // quick-n-dirty...
-        if (w.coordinates.length !== word.coordinates.length
-            || w.coordinates.join('') !== word.coordinates.join('')
-            || w.toString() !== word.toString()) {
-            return false;
-        }
-
-        this._marks[word.toString()] = word;
-
-        return true;
+        return (
+            w.coordinates.length === word.coordinates.length
+            && w.coordinates.join('') === word.coordinates.join('')
+            && w.toString() === word.toString()
+        );
     }
 
     /**

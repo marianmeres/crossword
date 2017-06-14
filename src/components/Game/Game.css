@@ -811,11 +811,30 @@ button {
   button[disabled] {
     cursor: not-allowed; }
 
-.cross-root {
-  padding: 1em;
-  height: 100vh;
+.cross-game {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  justify-content: center;
-  align-items: center; }
+  justify-content: flex-start;
+  align-items: flex-start; }
+  .cross-game-table {
+    table-layout: fixed;
+    background: #efefef; }
+    .cross-game-table td {
+      line-height: 1;
+      text-align: center;
+      padding: .75em;
+      text-transform: uppercase;
+      border: 1px solid gray;
+      font-size: 1.5em;
+      font-weight: bold;
+      user-select: none; }
+      .cross-game-table td._marked {
+        background: #ffc; }
+      .cross-game-table td._selected {
+        background: #cfc; }
+  .cross-game-words {
+    padding-left: 1em; }
+    .cross-game-words button {
+      display: block;
+      margin-bottom: 5px; }

@@ -1,0 +1,42 @@
+@import "../../_sass/shared";
+
+.#{$bemNs}-game {
+
+  @include flexrow-container-left-top;
+
+  &-board {
+  }
+
+  &-table {
+    table-layout: fixed;
+    background: #efefef;
+
+    td {
+      line-height: 1;
+      text-align: center;
+      padding: .75em;
+      text-transform: uppercase;
+      border: 1px solid gray;
+      font-size: 1.5em;
+      font-weight: bold;
+      user-select: none;
+
+      &._marked {
+        background: #ffc;
+      }
+      &._selected {
+        background: #cfc;
+      }
+    }
+  }
+
+  &-words {
+    padding-left: 1em;
+
+    button {
+      display: block;
+      margin-bottom: 5px;
+    }
+  }
+
+}

@@ -82,9 +82,9 @@ describe('Brute force: Board.getWord', () => {
 
 describe('Word', () => {
     let data = JSON.parse(fs.readFileSync(path.join(__dirname, './_data/sample.json')));
-    let b = new Board(data.board);
 
     it('coordinates DIRECTION_RIGHT', () => {
+        let b = new Board(data.board);
         let word = b.getWord(0, 0, 3, Crossword.DIRECTION_RIGHT);
         expect(word.coordinates).toEqual([ [0, 0], [1, 0], [2, 0]]);
         expect(word.direction).toEqual(Crossword.DIRECTION_RIGHT);
@@ -96,6 +96,7 @@ describe('Word', () => {
     });
 
     it('coordinates DIRECTION_LEFT', () => {
+        let b = new Board(data.board);
         // rac
         expect(
             b.getWord(2, 0, 3, Crossword.DIRECTION_LEFT).direction
@@ -103,6 +104,7 @@ describe('Word', () => {
     });
 
     it('coordinates DIRECTION_BOTTOM', () => {
+        let b = new Board(data.board);
         // cat
         expect(
             b.getWord(0, 0, 3, Crossword.DIRECTION_BOTTOM).direction
@@ -110,6 +112,7 @@ describe('Word', () => {
     });
 
     it('coordinates DIRECTION_TOP', () => {
+        let b = new Board(data.board);
         // tac
         expect(
             b.getWord(0, 2, 3, Crossword.DIRECTION_TOP).direction
@@ -117,6 +120,7 @@ describe('Word', () => {
     });
 
     it('coordinates DIRECTION_TOP_RIGHT', () => {
+        let b = new Board(data.board);
         // tar
         expect(
             b.getWord(0, 2, 3, Crossword.DIRECTION_TOP_RIGHT).direction
@@ -124,6 +128,7 @@ describe('Word', () => {
     });
 
     it('coordinates DIRECTION_TOP_LEFT', () => {
+        let b = new Board(data.board);
         // mac
         expect(
             b.getWord(2, 2, 3, Crossword.DIRECTION_TOP_LEFT).direction
@@ -131,6 +136,7 @@ describe('Word', () => {
     });
 
     it('coordinates DIRECTION_BOTTOM_RIGHT', () => {
+        let b = new Board(data.board);
         // cam
         expect(
             b.getWord(0, 0, 3, Crossword.DIRECTION_BOTTOM_RIGHT).direction
@@ -138,6 +144,7 @@ describe('Word', () => {
     });
 
     it('coordinates DIRECTION_BOTTOM_LEFT', () => {
+        let b = new Board(data.board);
         // rat
         expect(
             b.getWord(2, 0, 3, Crossword.DIRECTION_BOTTOM_LEFT).direction
@@ -148,14 +155,15 @@ describe('Word', () => {
 
 describe('Mark word', () => {
     let data = JSON.parse(fs.readFileSync(path.join(__dirname, './_data/sample.json')));
-    let b = new Board(data.board);
 
     it('returns false if word is not found', () => {
+        let b = new Board(data.board);
         let result = b.markWord(new Word(['a', 'a'], [[0, 0], [0, 1]]));
         expect(result).toBeFalsy();
     });
 
     it('it works when word is found', () => {
+        let b = new Board(data.board);
         let result = b.markWord(b.getWord(0, 0, 3, Crossword.DIRECTION_RIGHT));
         expect(result).toBeTruthy();
 
@@ -178,6 +186,40 @@ describe('Mark word', () => {
             [ 1, 1, 0 ],
             [ 1, 0, 1 ]
         ]);
+    });
+
+    it('unmark works', () => {
+        let b = new Board(data.board);
+        let word1 = b.find('mac');
+        let word2 = b.find('car');
+        let coords;
+
+        b.markWord(word1);
+        b.markWord(word2);
+        coords = b.getAllMarkedCoordinates();
+
+        expect(coords).toEqual([
+            [ 1, 1, 1 ],
+            [ 0, 1, 0 ],
+            [ 0, 0, 1 ]
+        ]);
+
+        b.unMarkWord(word1);
+        coords = b.getAllMarkedCoordinates();
+        expect(coords).toEqual([
+            [ 1, 1, 1 ],
+            [ 0, 0, 0 ],
+            [ 0, 0, 0 ]
+        ]);
+
+        b.unMarkWord(word2);
+        coords = b.getAllMarkedCoordinates();
+        expect(coords).toEqual([
+            [ 0, 0, 0 ],
+            [ 0, 0, 0 ],
+            [ 0, 0, 0 ]
+        ]);
+
     });
 
 });

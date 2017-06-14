@@ -19,21 +19,21 @@ export const config = {
             ],
 
             words: {
-                'ancúg': '',
-                'bandurky': '',
-                'drabina': '',
-                'džveredlo': '',
-                'firštok': '',
-                'gebuľa': '',
-                'gruľa': '',
-                'kolimaž': '',
-                'lajbík': '',
-                'mačanka': '',
-                'ocec': '',
-                'pacerky': '',
-                'rumkľa': '',
-                'takoj': '',
-                'vercajk': ''
+                ancúg: '',
+                bandurky: '',
+                drabina: '',
+                džveredlo: '',
+                firštok: '',
+                gebuľa: '',
+                gruľa: '',
+                kolimaž: '',
+                lajbík: '',
+                mačanka: '',
+                ocec: '',
+                pacerky: '',
+                rumkľa: '',
+                takoj: '',
+                vercajk: ''
             }
         },
     ]

@@ -3,7 +3,7 @@ import {config} from '../../config';
 
 import './Root.css';
 import {Board} from '../../_lib/crossword/Board';
-import BoardCmp from '../BoardCmp/BoardCmp';
+import Game from '../Game/Game';
 
 interface RootState {
     currentCrosswordIdx: number;
@@ -22,7 +22,7 @@ export default class Root extends React.Component<{}, RootState> {
 
         return (
             <div className={`${B}`}>
-                <BoardCmp
+                <Game
                     board={this.state.board}
                     words={config.crosswords[0].words}
                 />
