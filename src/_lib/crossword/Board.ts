@@ -313,4 +313,80 @@ export class Board {
 
         return marked;
     }
+
+    normalizeCoordinatesBetween(startX, startY, endX, endY) {
+        let sx = parseInt(startX, 10);
+        let ex = parseInt(endX, 10);
+        let sy = parseInt(startY, 10);
+        let ey = parseInt(endY, 10);
+
+        // sanity checks first
+        if (sx < 0 || sx > this.sizeX) { return []; }
+        if (sy < 0 || sy > this.sizeY) { return []; }
+        if (ex < 0 || ex > this.sizeX) { return []; }
+        if (ey < 0 || ey > this.sizeY) { return []; }
+
+        let out = [];
+
+        // easiest: all same
+        if (sx === ex && sy === ey) {
+            return [[sx, sy]];
+        }
+
+        // easy: same x axis
+        if (sx === ex) {
+            if (ey - sy >= 0) {
+                for (let y = sy; y <= ey; y++) { out.push([sx, y]); }
+            } else {
+                for (let y = sy; y >= ey; y--) { out.push([sx, y]); }
+            }
+            return out;
+        }
+
+        // easy case: same y axis
+        if (sy === ey) {
+            if (ex - sx >= 0) {
+                for (let x = sx; x <= ex; x++) { out.push([x, sy]); }
+            } else {
+                for (let x = sx; x >= ex; x--) { out.push([x, sy]); }
+            }
+            return out;
+        }
+
+        // still: exact diagonal (same deltas)
+        if (Math.abs(ex - sx) === Math.abs(ey - sy)) {
+            let x = sx;
+            let y = sy;
+            let delta = ex - sx;
+            for (let i = 0; i <= Math.abs(delta); i++) {
+                out.push([x, y]);
+                if (ex - sx >= 0) { x++; }
+                else { x--; }
+                if (ey - sy >= 0) { y++; }
+                else { y--; }
+            }
+            return out;
+        }
+
+        // harder: mixed values
+        let deltaX = ex - sx;
+        let deltaY = ey - sy;
+        let x = sx;
+        let y = sy;
+        if (Math.abs(deltaX) >= Math.abs(deltaY)) {
+            for (let i = 0; i <= Math.abs(deltaX); i++) {
+                out.push([x, y]);
+                if (deltaX >= 0) { x++; }
+                else { x--; }
+            }
+        } else {
+            for (let i = 0; i <= Math.abs(deltaY); i++) {
+                out.push([x, y]);
+                if (deltaY >= 0) { y++; }
+                else { y--; }
+            }
+        }
+
+        return out;
+    }
 }

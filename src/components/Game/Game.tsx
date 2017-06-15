@@ -24,6 +24,11 @@ export default class Game extends React.Component<GameProps, GameState> {
         selectedCoords: [],
     };
 
+    dragStartX = null;
+    dragStartY = null;
+    dragEndX = null;
+    dragEndY = null;
+
     _isDragging = false;
     _coords = [];
 
@@ -56,7 +61,11 @@ export default class Game extends React.Component<GameProps, GameState> {
             //         [e.target.dataset.x, e.target.dataset.y]
             //     );
             // }));
-            this.saveCoords(e.target.dataset.x, e.target.dataset.y);
+
+            this.saveCoords(
+                this.dragStartX, this.dragStartY,
+                e.target.dataset.x, e.target.dataset.y
+            );
         }
     }
 
@@ -64,12 +73,24 @@ export default class Game extends React.Component<GameProps, GameState> {
         // console.log('start', e);
         this._isDragging = true;
         this.setState({selectedCoords: []});
-        this.saveCoords(e.target.dataset.x, e.target.dataset.y);
+        if (this.dragStartX === null) {
+            this.dragStartX = e.target.dataset.x;
+            this.dragStartY = e.target.dataset.y;
+        }
+        this.dragEndX = e.target.dataset.x;
+        this.dragEndY = e.target.dataset.y;
+        this.saveCoords(
+            this.dragStartX, this.dragStartY, this.dragEndX, this.dragEndY
+        );
     }
 
     handleTdDragLeave(e) {
         // console.log('leave', e);
         this._isDragging = false;
+        this.dragStartX = null;
+        this.dragStartY = null;
+        this.dragEndX = null;
+        this.dragEndY = null;
         // console.log(this.state.selectedCoords);
         this.handleSelectedCoords();
     }
@@ -88,9 +109,22 @@ export default class Game extends React.Component<GameProps, GameState> {
         this.setState({selectedCoords: []});
     }
 
-    saveCoords(x, y) {
-        let selectedCoords = this.state.selectedCoords.slice();
-        selectedCoords.push([parseInt(x, 10), parseInt(y, 10)]);
+    saveCoords(sx, sy, ex, ey) {
+        // let selectedCoords = this.state.selectedCoords.slice();
+        // selectedCoords.push([parseInt(x, 10), parseInt(y, 10)]);
+        //
+        // if (selectedCoords.length > 1) {
+        //     let lastIdx = selectedCoords.length - 1;
+        //     selectedCoords = this.state.board.normalizeCoordinatesBetween(
+        //         selectedCoords[0][0], selectedCoords[0][1],
+        //         selectedCoords[lastIdx][0], selectedCoords[lastIdx][1]
+        //     );
+        // }
+
+        let selectedCoords = this.state.board.normalizeCoordinatesBetween(
+            sx, sy, ex, ey
+        );
+
         this.setState({ selectedCoords });
     }
 
