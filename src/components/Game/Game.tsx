@@ -3,11 +3,9 @@ import {config} from '../../config';
 
 import './Game.css';
 import {Board} from '../../_lib/crossword/Board';
-import Word from '../../_lib/crossword/Word';
 
 interface GameProps {
-    board: Board;
-    words: any;
+    crosswordIdx: number;
 }
 
 interface GameState {
@@ -20,7 +18,7 @@ export default class Game extends React.Component<GameProps, GameState> {
 
     state = {
         selectedValue: '',
-        board: this.props.board,
+        board: null,
         selectedCoords: [],
     };
 
@@ -30,38 +28,31 @@ export default class Game extends React.Component<GameProps, GameState> {
     dragEndY = null;
 
     _isDragging = false;
-    _coords = [];
+
+    words: string[];
 
     constructor(props) {
         super(props);
+
+        if (config.crosswords[this.props.crosswordIdx]) {
+            this.state.board = new Board(config.crosswords[this.props.crosswordIdx].board);
+            this.words = config.crosswords[this.props.crosswordIdx].words;
+
+        }
 
         this.handleWordButtonClick = this.handleWordButtonClick.bind(this);
         this.handleTdMouseOver = this.handleTdMouseOver.bind(this);
         this.handleTdDragStart = this.handleTdDragStart.bind(this);
         this.handleTdDragLeave = this.handleTdDragLeave.bind(this);
-
-        // console.log(Object.keys(props.words).indexOf('ancúg') !== -1);
-        // console.log(!!props.words['ancúg']);
     }
 
     handleWordButtonClick(e) {
         e.preventDefault();
-        // console.log(e.target.dataset.kokos);
         this.markWord(e.target.value, true);
     }
 
     handleTdMouseOver(e) {
         if (this._isDragging) {
-            // console.log(e.target.dataset.x, e.target.dataset.y);
-            // let selectedCoords = this.state.selectedCoords.slice();
-            // selectedCoords.push([e.target.dataset.x, e.target.dataset.y]);
-            // this.setState({ selectedCoords });
-            // this.setState(((prevState, props) => {
-            //     return prevState.selectedCoords.push(
-            //         [e.target.dataset.x, e.target.dataset.y]
-            //     );
-            // }));
-
             this.saveCoords(
                 this.dragStartX, this.dragStartY,
                 e.target.dataset.x, e.target.dataset.y
@@ -91,7 +82,6 @@ export default class Game extends React.Component<GameProps, GameState> {
         this.dragStartY = null;
         this.dragEndX = null;
         this.dragEndY = null;
-        // console.log(this.state.selectedCoords);
         this.handleSelectedCoords();
     }
 
@@ -110,21 +100,9 @@ export default class Game extends React.Component<GameProps, GameState> {
     }
 
     saveCoords(sx, sy, ex, ey) {
-        // let selectedCoords = this.state.selectedCoords.slice();
-        // selectedCoords.push([parseInt(x, 10), parseInt(y, 10)]);
-        //
-        // if (selectedCoords.length > 1) {
-        //     let lastIdx = selectedCoords.length - 1;
-        //     selectedCoords = this.state.board.normalizeCoordinatesBetween(
-        //         selectedCoords[0][0], selectedCoords[0][1],
-        //         selectedCoords[lastIdx][0], selectedCoords[lastIdx][1]
-        //     );
-        // }
-
         let selectedCoords = this.state.board.normalizeCoordinatesBetween(
             sx, sy, ex, ey
         );
-
         this.setState({ selectedCoords });
     }
 
@@ -155,16 +133,21 @@ export default class Game extends React.Component<GameProps, GameState> {
     }
 
     isWhitelisted(wordOrStr) {
-        // return !!this.props.words[wordOrStr.toString()];
-        return (Object.keys(this.props.words).indexOf(wordOrStr.toString()) !== -1);
+        return (this.words.indexOf(wordOrStr.toString()) !== -1);
+    }
+
+    renderVisual(str: string) {
+        const map = config.visualOutputReplaceMap;
+        return str.split('').map((char) => (map[char] ? map[char] : char)).join('');
     }
 
     render() {
         let B = `${config.B}-game`;
         let board = this.state.board;
 
-        // board.markWord(board.find('gebuľa'));
-        // board.markWord(board.find('mačanka'));
+        if (!board) {
+            return <div>board '{this.props.crosswordIdx}' not found</div>;
+        }
 
         let marks = board.getAllMarkedCoordinates();
         let isMarked = (x, y) => (marks[y] && marks[y][x]);
@@ -181,6 +164,9 @@ export default class Game extends React.Component<GameProps, GameState> {
 
         return (
             <div className={`${B}`}>
+
+                <div className={`${B}-header`}>top</div>
+
                 <div className={`${B}-board`}>
                     <table className={`${B}-table`}><tbody>
                     {
@@ -199,41 +185,43 @@ export default class Game extends React.Component<GameProps, GameState> {
                                         data-x={x}
                                         data-y={y}
                                     >
-                                        {char}
+                                        {this.renderVisual(char)}
                                     </td>
                                 );
                             });
                             return (
-                                <tr key={`tr-${y}`}>
-                                    {tds}
-                                </tr>
+                                <tr key={`tr-${y}`}>{tds}</tr>
                             );
                         })
                     }
                     </tbody></table>
                 </div>
-                <div className={`${B}-words`}>
-                    {
-                        Object.keys(this.props.words).map((key) => {
-                            let cls = 'btn btn-sm ';
-                            if (this.state.board.isMarked(key)) {
-                                cls += ' btn-primary';
-                            } else {
-                                cls += ' btn-outline-primary';
-                            }
-                            return (
-                                <button
-                                    key={key}
-                                    className={cls}
-                                    value={key}
-                                    onClick={this.handleWordButtonClick}
-                                >
-                                    {key}
-                                </button>
-                            );
-                        })
-                    }
-                </div>
+
+                <div className={`${B}-footer`}>bottom</div>
+
+                {/*<div className={`${B}-words`}>*/}
+                    {/*{*/}
+                        {/*// Object.keys(this.words).map((key) => {*/}
+                        {/*this.words.map((word) => {*/}
+                            {/*let cls = 'btn btn-sm ';*/}
+                            {/*if (this.state.board.isMarked(word)) {*/}
+                                {/*cls += ' btn-primary';*/}
+                            {/*} else {*/}
+                                {/*cls += ' btn-outline-primary';*/}
+                            {/*}*/}
+                            {/*return (*/}
+                                {/*<button*/}
+                                    {/*key={word}*/}
+                                    {/*className={cls}*/}
+                                    {/*value={word}*/}
+                                    {/*onClick={this.handleWordButtonClick}*/}
+                                {/*>*/}
+                                    {/*{this.renderVisual(word)}*/}
+                                {/*</button>*/}
+                            {/*);*/}
+                        {/*})*/}
+                    {/*}*/}
+                {/*</div>*/}
 
             </div>
         );
@@ -241,3 +229,8 @@ export default class Game extends React.Component<GameProps, GameState> {
     }
 
 }
+
+
+const Header = () => {
+
+};

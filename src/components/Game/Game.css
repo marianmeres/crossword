@@ -811,31 +811,25 @@ button {
   button[disabled] {
     cursor: not-allowed; }
 
-.cross-game {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  align-items: flex-start; }
-  .cross-game-table {
-    table-layout: fixed;
-    background: #efefef; }
-    .cross-game-table td {
-      line-height: 1;
-      text-align: center;
-      padding: .75em;
-      text-transform: uppercase;
-      border: 1px solid gray;
-      font-size: 1.5em;
-      font-weight: bold;
-      user-select: none;
-      cursor: pointer; }
-      .cross-game-table td._marked {
-        background: #ffc; }
-      .cross-game-table td._selected {
-        background: #cfc; }
-  .cross-game-words {
-    padding-left: 1em; }
-    .cross-game-words button {
-      display: block;
-      margin-bottom: 5px; }
+.cross-game-table {
+  table-layout: fixed;
+  background: #efefef; }
+  .cross-game-table td {
+    line-height: 1;
+    text-align: center;
+    padding: .75em;
+    text-transform: uppercase;
+    border: 1px solid gray;
+    font-size: 1.5em;
+    font-weight: bold;
+    user-select: none;
+    cursor: pointer; }
+    .cross-game-table td._marked {
+      background: #ffc; }
+    .cross-game-table td._selected {
+      background: #cfc; }
+
+.cross-game-words {
+  padding-left: 1em; }
+  .cross-game-words button {
+    margin-bottom: 5px; }

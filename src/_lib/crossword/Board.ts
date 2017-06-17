@@ -314,6 +314,13 @@ export class Board {
         return marked;
     }
 
+    /**
+     * @param startX
+     * @param startY
+     * @param endX
+     * @param endY
+     * @returns {any}
+     */
     normalizeCoordinatesBetween(startX, startY, endX, endY) {
         let sx = parseInt(startX, 10);
         let ex = parseInt(endX, 10);

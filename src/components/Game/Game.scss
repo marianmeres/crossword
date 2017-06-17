@@ -2,7 +2,7 @@
 
 .#{$bemNs}-game {
 
-  @include flexrow-container-left-top;
+  //@include flexrow-container-left-top;
 
   &-board {
   }
@@ -35,7 +35,7 @@
     padding-left: 1em;
 
     button {
-      display: block;
+      // display: block;
       margin-bottom: 5px;
     }
   }
