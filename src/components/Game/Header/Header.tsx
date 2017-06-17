@@ -17,7 +17,9 @@ export default class Header extends React.Component<HeaderProps, {}> {
 
     render() {
         let B = `${config.B}-game-header`;
-        let time = hms(this.props.elapsed);
+
+        let elapsed = Math.max(0, this.props.elapsed);
+        let time = hms(elapsed);
 
         return (
             <div className={B}>
