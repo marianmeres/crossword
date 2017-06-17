@@ -1,0 +1,45 @@
+.cross-game-header {
+  text-align: center;
+  width: 100%;
+  color: white;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center; }
+  .cross-game-header-left {
+    flex: 1;
+    text-align: left; }
+    .cross-game-header-left button {
+      background: none;
+      border: none;
+      color: white; }
+  .cross-game-header-center {
+    flex: 1;
+    text-align: center; }
+  .cross-game-header-right {
+    flex: 1;
+    text-align: right; }
+  .cross-game-header-title {
+    margin: 0;
+    line-height: 1;
+    font-size: .9rem;
+    display: block; }
+  .cross-game-header-clock {
+    display: inline-block;
+    line-height: 1;
+    font-weight: normal;
+    font-size: 3em;
+    font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    margin-right: 3em;
+    color: #fbbdb4;
+    float: left; }
+  .cross-game-header-hits {
+    display: inline-block;
+    line-height: 1;
+    font-weight: normal;
+    font-size: 3em;
+    float: right; }
+    .cross-game-header-hits span {
+      color: #f66753; }

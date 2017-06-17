@@ -1,0 +1,17 @@
+.cross-game-footer {
+  text-align: center;
+  width: 100%;
+  margin-top: 30px; }
+  .cross-game-footer-words button {
+    border: 0;
+    background: #771406;
+    color: #fbbdb4;
+    display: inline-block;
+    padding: 3px 6px;
+    text-transform: uppercase;
+    margin: 2px;
+    border-radius: 3px; }
+    .cross-game-footer-words button._marked {
+      text-decoration: line-through;
+      background: #460c04;
+      color: #f77c6b; }

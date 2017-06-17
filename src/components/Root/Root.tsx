@@ -2,25 +2,57 @@ import * as React from 'react';
 import {config} from '../../config';
 
 import './Root.css';
-import {Board} from '../../_lib/crossword/Board';
 import Game from '../Game/Game';
 
 interface RootState {
     crosswordIdx: number;
-    // board: Board;
+    selectedValue: number;
 }
 
 export default class Root extends React.Component<{}, RootState> {
 
     state: RootState = {
         crosswordIdx: null,
-        // board: new Board(config.crosswords[0].board),
+        selectedValue: -1,
     };
 
     constructor(props) {
         super(props);
 
         this.handleGameSelectClick = this.handleGameSelectClick.bind(this);
+        // this.selectGame = this.selectGame.bind(this);
+        this.handleSelectChange = this.handleSelectChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleGameSelectClick(e) {
+        e.preventDefault();
+        this.selectGame(e.target.value);
+    }
+
+    selectGame(idx) {
+        this.setState({crosswordIdx: idx === null ? null : parseInt(idx, 10)});
+    }
+
+    handleSelectChange(e) {
+        this.setState({selectedValue: e.target.value});
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+        let idx = parseInt(this.state.selectedValue as any, 10);
+        if (-1 === idx) {
+            idx = mm_getRandomInt(0, config.crosswords.length - 1);
+        }
+
+        // console.log(this.state.selectedValue);
+        this.selectGame(idx);
+    }
+
+    actions() {
+        return {
+            back: () => this.selectGame(null),
+        };
     }
 
     render() {
@@ -31,47 +63,65 @@ export default class Root extends React.Component<{}, RootState> {
             return this.renderSelectGame();
         }
 
-        // if (!config.crosswords[key]) {
-        //     return <div>unknown</div>;
-        // }
-        //
-        // let board = config.crosswords[key].board;
-
         return (
             <div className={`${B}`}>
-                <Game crosswordIdx={key} />
+                <Game
+                    crosswordIdx={key}
+                    actions={this.actions()}
+                />
             </div>
         );
-    }
-
-    handleGameSelectClick(e) {
-        e.preventDefault();
-        this.selectGame(e.target.value);
-    }
-
-    selectGame(idx) {
-        this.setState({crosswordIdx: parseInt(idx, 10)});
     }
 
     renderSelectGame() {
         let games = config.crosswords;
+        let B = `${config.B}-root`;
 
         return (
-            <div>
-                {
-                    games.map((cfg, idx) => {
-                        return (
-                            <button
-                                key={cfg.title}
-                                value={idx}
-                                onClick={this.handleGameSelectClick}
-                            >
-                                {idx} - {cfg.title}  ({cfg.words.length})
-                            </button>
-                        );
-                    })
-                }
+            <div className={`${B}`}>
+                <div className={`${B}-selector`}>
+                    <select
+                        className="custom-select"
+                        value={this.state.selectedValue}
+                        onChange={this.handleSelectChange}
+                    >
+                        <option key={-1} value={-1}>
+                            Náhodná osemsmerovka
+                        </option>
+                        <optgroup>
+                    {
+                        games.map((cfg, idx) => {
+                            return (
+                                <option key={idx} value={idx}>
+                                    {cfg.title}
+                                </option>
+                            );
+                            // return (
+                            //     <button
+                            //         key={cfg.title}
+                            //         value={idx}
+                            //         onClick={this.handleGameSelectClick}
+                            //     >
+                            //         {idx} - {cfg.title}  ({cfg.words.length})
+                            //     </button>
+                            // );
+                        })
+                    }
+                        </optgroup>
+                    </select>
+                    &nbsp;
+                    <button
+                        onClick={this.handleSubmit}
+                        className="btn"
+                    >
+                        Štart
+                    </button>
+                </div>
             </div>
         );
     }
+}
+
+export function mm_getRandomInt(min, max): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }

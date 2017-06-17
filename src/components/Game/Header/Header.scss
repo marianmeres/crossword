@@ -1,0 +1,68 @@
+@import "../../../_sass/shared";
+
+.#{$bemNs}-game-header {
+  text-align: center;
+  width: 100%;
+  color: white;
+  margin-bottom: 30px;
+
+  @include flexrow-container;
+
+  &-left {
+    flex: 1;
+    text-align: left;
+
+    button {
+      background: none;
+      border: none;
+      color: white;
+    }
+  }
+
+  &-center {
+    flex: 1;
+    text-align: center;
+  }
+
+  &-right {
+    flex: 1;
+    text-align: right;
+  }
+
+  &-title {
+    //margin: 0 0 10px 0;
+    margin: 0;
+    line-height: 1;
+    font-size: .9rem;
+    display: block;
+  }
+
+  //&-stats {
+  //  //width: 100%;
+  //  padding-top: 10px;
+  //  //@include clearfix;
+  //}
+
+  &-clock {
+    display: inline-block;
+    line-height: 1;
+    font-weight: normal;
+    font-size: 3em;
+    font-family: $font-family-monospace;
+    margin-right: 3em;
+    color: lighten($color-saris, 40%);
+    float: left;
+  }
+
+  &-hits {
+    display: inline-block;
+    line-height: 1;
+    font-weight: normal;
+    font-size: 3em;
+    float: right;
+
+    span {
+      color: lighten($color-saris, 20%);
+    }
+  }
+}

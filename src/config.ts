@@ -2,9 +2,12 @@
 export const config = {
     B: 'cross',
 
+    timeLimitSeconds: (60 * 3),
+    // timeLimitSeconds: 5,
+
     // hack kvoli "ch", "dz", "dž"...
-    // NOTE: pre "dz" a "dž" existuje unicode char, ale budem to replacovat rovnako,
-    // nech je chovanie konzistentne
+    // NOTE: pre "dz" a "dž" sice existuje unicode char, ale budem to replacovat
+    // rovnako, nech je chovanie konzistentne
     visualOutputReplaceMap: {
         '~': 'ch',
         '±': 'dz',

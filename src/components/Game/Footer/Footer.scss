@@ -1,0 +1,32 @@
+@import "../../../_sass/shared";
+
+.#{$bemNs}-game-footer {
+  text-align: center;
+  width: 100%;
+  margin-top: 30px;
+
+  &-words {
+
+    button {
+      border: 0;
+      //background: lighten(#ffdb91, 7%); // lighten($color-saris, 50%);
+      background: darken($color-saris, 20%);
+      color: lighten($color-saris, 40%);
+      //color: white;
+      display: inline-block;
+      padding: 3px 6px;
+      text-transform: uppercase;
+      margin: 2px;
+      border-radius: 3px;
+      //color: black;
+      // font-weight: bold;
+
+      &._marked {
+        text-decoration: line-through;
+        background: darken($color-saris, 30%);
+        color: lighten($color-saris, 25%);
+      }
+    }
+
+  }
+}

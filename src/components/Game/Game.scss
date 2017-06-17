@@ -2,31 +2,60 @@
 
 .#{$bemNs}-game {
 
-  //@include flexrow-container-left-top;
+  height: 100%;
+  @include flexcolumn-container-left-top;
+
+  // presunute do Header.css
+  //&-header {
+  //  text-align: center;
+  //  width: 100%;
+  //}
 
   &-board {
+    flex: 1;
+    @include flexrow-container;
+    width: 100%;
+    //background: silver;
   }
 
   &-table {
+    //width: 100%;
+    height: 100%;
+    //width: auto;
+
+    //max-width: 600px;
+    //max-height: 600px;
+
     table-layout: fixed;
-    background: #efefef;
+    background: white;
 
     td {
       line-height: 1;
       text-align: center;
-      padding: .75em;
+      //padding: .75em 0;
+      width: 2em;
+      //height: 2em;
+      padding: 0;
+      color: black;
+
+      //padding: .5em;
+
       text-transform: uppercase;
-      border: 1px solid gray;
+      border: 1px solid darken(#ffdb91, 20%);
       font-size: 1.5em;
       font-weight: bold;
       user-select: none;
       cursor: pointer;
+      font-family: $font-family-monospace;;
 
       &._marked {
-        background: #ffc;
+        background: darken($color-saris, 15%);
+        color: #ffdb91;
       }
       &._selected {
-        background: #cfc;
+        //background: lighten($color-saris, 45%);
+        background: #ddd;
+        color: black;
       }
     }
   }
@@ -40,4 +69,8 @@
     }
   }
 
+  &-footer {
+    text-align: center;
+    width: 100%;
+  }
 }

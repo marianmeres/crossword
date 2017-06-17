@@ -3,15 +3,27 @@ import {config} from '../../config';
 
 import './Game.css';
 import {Board} from '../../_lib/crossword/Board';
+import Header from './Header/Header';
+import Footer from './Footer/Footer';
 
-interface GameProps {
+export function renderVisual(str: string) {
+    const map = config.visualOutputReplaceMap;
+    return str.split('').map((char) => (map[char] ? map[char] : char)).join('');
+}
+
+export interface GameProps {
     crosswordIdx: number;
+    actions: {
+        back: () => any;
+    };
 }
 
 interface GameState {
     selectedValue: string;
     board: Board;
     selectedCoords: number[][];
+    isFinished: boolean;
+    elapsed: number;
 }
 
 export default class Game extends React.Component<GameProps, GameState> {
@@ -20,6 +32,8 @@ export default class Game extends React.Component<GameProps, GameState> {
         selectedValue: '',
         board: null,
         selectedCoords: [],
+        isFinished: false,
+        elapsed: 0,
     };
 
     dragStartX = null;
@@ -30,6 +44,10 @@ export default class Game extends React.Component<GameProps, GameState> {
     _isDragging = false;
 
     words: string[];
+    timer = null;
+    title: string = null;
+
+    started = Date.now();
 
     constructor(props) {
         super(props);
@@ -37,13 +55,37 @@ export default class Game extends React.Component<GameProps, GameState> {
         if (config.crosswords[this.props.crosswordIdx]) {
             this.state.board = new Board(config.crosswords[this.props.crosswordIdx].board);
             this.words = config.crosswords[this.props.crosswordIdx].words;
-
+            this.title = config.crosswords[this.props.crosswordIdx].title;
         }
 
         this.handleWordButtonClick = this.handleWordButtonClick.bind(this);
         this.handleTdMouseOver = this.handleTdMouseOver.bind(this);
         this.handleTdDragStart = this.handleTdDragStart.bind(this);
         this.handleTdDragLeave = this.handleTdDragLeave.bind(this);
+        this.finishGame = this.finishGame.bind(this);
+        this.markWord = this.markWord.bind(this);
+    }
+
+    componentDidMount() {
+        this.timer = setInterval(() => this.tick(), 1000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timer);
+    }
+
+    tick() {
+        if (this.state.isFinished) { return; }
+        let elapsed = Math.round((Date.now() - this.started) / 1000);
+        if (elapsed >= config.timeLimitSeconds) {
+            this.setState({ elapsed, isFinished: true });
+        } else {
+            this.setState({elapsed});
+        }
+    }
+
+    finishGame() {
+        this.setState({isFinished: true});
     }
 
     handleWordButtonClick(e) {
@@ -107,6 +149,12 @@ export default class Game extends React.Component<GameProps, GameState> {
     }
 
     markWord(wordStr, allowUnmark = false) {
+
+        // ak sme skoncili, tak uz nic
+        if (this.state.isFinished) {
+            return alert('Čas vypršal');
+        }
+
         let found = this.state.board.find(wordStr);
 
         // tu musime osetrit, ci sa realne nachadza vo whiteliste, lebo:
@@ -129,6 +177,9 @@ export default class Game extends React.Component<GameProps, GameState> {
                 board.markWord(found);
             }
             this.setState({board});
+            if (Object.keys(board.marks).length === this.words.length) {
+                this.setState({isFinished: true});
+            }
         }
     }
 
@@ -137,8 +188,7 @@ export default class Game extends React.Component<GameProps, GameState> {
     }
 
     renderVisual(str: string) {
-        const map = config.visualOutputReplaceMap;
-        return str.split('').map((char) => (map[char] ? map[char] : char)).join('');
+        return renderVisual(str);
     }
 
     render() {
@@ -165,7 +215,15 @@ export default class Game extends React.Component<GameProps, GameState> {
         return (
             <div className={`${B}`}>
 
-                <div className={`${B}-header`}>top</div>
+                <Header
+                    wordsCound={this.words.length}
+                    markedCount={Object.keys(this.state.board.marks).length}
+                    title={this.title}
+                    elapsed={config.timeLimitSeconds - this.state.elapsed}
+                    finishGame={this.finishGame}
+                    isFinished={this.state.isFinished}
+                    {...this.props}
+                />
 
                 <div className={`${B}-board`}>
                     <table className={`${B}-table`}><tbody>
@@ -197,31 +255,12 @@ export default class Game extends React.Component<GameProps, GameState> {
                     </tbody></table>
                 </div>
 
-                <div className={`${B}-footer`}>bottom</div>
-
-                {/*<div className={`${B}-words`}>*/}
-                    {/*{*/}
-                        {/*// Object.keys(this.words).map((key) => {*/}
-                        {/*this.words.map((word) => {*/}
-                            {/*let cls = 'btn btn-sm ';*/}
-                            {/*if (this.state.board.isMarked(word)) {*/}
-                                {/*cls += ' btn-primary';*/}
-                            {/*} else {*/}
-                                {/*cls += ' btn-outline-primary';*/}
-                            {/*}*/}
-                            {/*return (*/}
-                                {/*<button*/}
-                                    {/*key={word}*/}
-                                    {/*className={cls}*/}
-                                    {/*value={word}*/}
-                                    {/*onClick={this.handleWordButtonClick}*/}
-                                {/*>*/}
-                                    {/*{this.renderVisual(word)}*/}
-                                {/*</button>*/}
-                            {/*);*/}
-                        {/*})*/}
-                    {/*}*/}
-                {/*</div>*/}
+                <Footer
+                    words={this.words}
+                    board={this.state.board}
+                    markWord={this.markWord}
+                    {...this.props}
+                />
 
             </div>
         );
@@ -229,8 +268,3 @@ export default class Game extends React.Component<GameProps, GameState> {
     }
 
 }
-
-
-const Header = () => {
-
-};
