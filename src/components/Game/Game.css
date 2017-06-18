@@ -14,13 +14,13 @@
     align-items: center;
     width: 100%; }
   .cross-game-table {
-    height: 100%;
     table-layout: fixed;
     background: white; }
     .cross-game-table td {
       line-height: 1;
       text-align: center;
       width: 2em;
+      height: 2em;
       padding: 0;
       color: black;
       text-transform: uppercase;
