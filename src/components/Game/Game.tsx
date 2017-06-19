@@ -1,4 +1,6 @@
 import * as React from 'react';
+import Measure from 'react-measure';
+
 import {config} from '../../config';
 
 import './Game.css';
@@ -25,6 +27,14 @@ interface GameState {
     isFinished: boolean;
     elapsed: number;
     _debug: {};
+    boardDimensions: {
+        width: number;
+        height: number;
+        top: number;
+        right: number;
+        bottom: number;
+        left: number;
+    };
 }
 
 export default class Game extends React.Component<GameProps, GameState> {
@@ -36,6 +46,10 @@ export default class Game extends React.Component<GameProps, GameState> {
         isFinished: false,
         elapsed: 0,
         _debug: {},
+        boardDimensions: {
+            width: -1, height: -1,
+            top: -1, right: -1, bottom: -1, left: -1
+        },
     };
 
     dragStartX = null;
@@ -61,14 +75,18 @@ export default class Game extends React.Component<GameProps, GameState> {
         }
 
         this.handleWordButtonClick = this.handleWordButtonClick.bind(this);
-        this.handleTdMouseOver = this.handleTdMouseOver.bind(this);
-        this.handleTdDragStart = this.handleTdDragStart.bind(this);
-        this.handleTdDragLeave = this.handleTdDragLeave.bind(this);
 
+        // this.handleTdMouseOver = this.handleTdMouseOver.bind(this);
+        // this.handleTdDragStart = this.handleTdDragStart.bind(this);
+        // this.handleTdDragLeave = this.handleTdDragLeave.bind(this);
 
         this._onTouchStart = this._onTouchStart.bind(this);
         this._onTouchEnd = this._onTouchEnd.bind(this);
         this._onTouchMove = this._onTouchMove.bind(this);
+
+        this._onMouseDown = this._onMouseDown.bind(this);
+        this._onMouseUp = this._onMouseUp.bind(this);
+        this._onMouseMove = this._onMouseMove.bind(this);
 
         this.finishGame = this.finishGame.bind(this);
         this.markWord = this.markWord.bind(this);
@@ -101,39 +119,40 @@ export default class Game extends React.Component<GameProps, GameState> {
         this.markWord(e.target.value, true);
     }
 
-    handleTdMouseOver(e) {
-        if (this._isDragging) {
-            this.saveCoords(
-                this.dragStartX, this.dragStartY,
-                e.target.dataset.x, e.target.dataset.y
-            );
-        }
-    }
-
-    handleTdDragStart(e) {
-        // console.log('start', e);
-        this._isDragging = true;
-        this.setState({selectedCoords: []});
-        if (this.dragStartX === null) {
-            this.dragStartX = e.target.dataset.x;
-            this.dragStartY = e.target.dataset.y;
-        }
-        this.dragEndX = e.target.dataset.x;
-        this.dragEndY = e.target.dataset.y;
-        this.saveCoords(
-            this.dragStartX, this.dragStartY, this.dragEndX, this.dragEndY
-        );
-    }
-
-    handleTdDragLeave(e) {
-        // console.log('leave', e);
-        this._isDragging = false;
-        this.dragStartX = null;
-        this.dragStartY = null;
-        this.dragEndX = null;
-        this.dragEndY = null;
-        this.handleSelectedCoords();
-    }
+    // prerobene na mouse/touch move
+    // handleTdMouseOver(e) {
+    //     if (this._isDragging) {
+    //         this.saveCoords(
+    //             this.dragStartX, this.dragStartY,
+    //             e.target.dataset.x, e.target.dataset.y
+    //         );
+    //     }
+    // }
+    //
+    // handleTdDragStart(e) {
+    //     // console.log('start', e);
+    //     this._isDragging = true;
+    //     this.setState({selectedCoords: []});
+    //     if (this.dragStartX === null) {
+    //         this.dragStartX = e.target.dataset.x;
+    //         this.dragStartY = e.target.dataset.y;
+    //     }
+    //     this.dragEndX = e.target.dataset.x;
+    //     this.dragEndY = e.target.dataset.y;
+    //     this.saveCoords(
+    //         this.dragStartX, this.dragStartY, this.dragEndX, this.dragEndY
+    //     );
+    // }
+    //
+    // handleTdDragLeave(e) {
+    //     // console.log('leave', e);
+    //     this._isDragging = false;
+    //     this.dragStartX = null;
+    //     this.dragStartY = null;
+    //     this.dragEndX = null;
+    //     this.dragEndY = null;
+    //     this.handleSelectedCoords();
+    // }
 
     handleSelectedCoords() {
         let selected = this.state.selectedCoords;
@@ -157,34 +176,83 @@ export default class Game extends React.Component<GameProps, GameState> {
     }
 
     _onTouchStart(e) {
-        this.setState({
-            _debug: {
-                x: e.touches[0].clientX,
-                y: e.touches[0].clientY,
-            }
-        });
+        this._onPseudoDragStart(e.touches[0].clientX, e.touches[0].clientY);
     }
 
     _onTouchEnd(e) {
-        this.setState({_debug: null});
+        this._onPseudoDragEnd();
     }
 
     _onTouchMove(e) {
-        // console.log(e);
-        // clientX: X coordinate of touch relative to the viewport (excludes scroll offset)
-        // clientY: Y coordinate of touch relative to the viewport (excludes scroll offset)
-        // screenX: Relative to the screen
-        // screenY: Relative to the screen
-        // pageX: Relative to the full page (includes scrolling)
-        // pageY: Relative to the full page (includes scrolling)
-        // target: Node the touch event originated from
-        // identifier: An identifying number, unique to each touch event
-        let keys = ['clientX', 'clientY', 'screenX', 'screenY', 'pageX', 'pageY'];
-        let dbg = {};
-        keys.forEach((k) => dbg[k] = e.touches[0][k]);
-        this.setState({
-            _debug: dbg
-        });
+        this._onPseudoDragMove(e.touches[0].clientX, e.touches[0].clientY);
+    }
+
+    _onMouseDown(e) {
+        this._onPseudoDragStart(e.clientX, e.clientY);
+    }
+
+    _onMouseUp(e) {
+        this._onPseudoDragEnd();
+    }
+
+    _onMouseMove(e) {
+        this._onPseudoDragMove(e.clientX, e.clientY);
+    }
+
+    _onPseudoDragStart(clientX, clientY) {
+        this._isDragging = true;
+        this.setState({selectedCoords: []});
+
+        if (!this._isOnBoard(clientX, clientY)) { return; }
+
+        let coords = this._getCoordsFromClientXY(clientX, clientY);
+
+        this.dragStartX = coords[0];
+        this.dragStartY = coords[1];
+        this.dragEndX = coords[0];
+        this.dragEndY = coords[1];
+
+        this.saveCoords(
+            this.dragStartX, this.dragStartY, this.dragEndX, this.dragEndY
+        );
+    }
+
+    _onPseudoDragMove(clientX, clientY) {
+        if (this._isDragging && this._isOnBoard(clientX, clientY)) {
+            let coords = this._getCoordsFromClientXY(clientX, clientY);
+            this.saveCoords(
+                this.dragStartX, this.dragStartY, coords[0], coords[1]
+            );
+        }
+    }
+
+    _onPseudoDragEnd() {
+        this._isDragging = false;
+        this.dragStartX = null;
+        this.dragStartY = null;
+        this.dragEndX = null;
+        this.dragEndY = null;
+        this.handleSelectedCoords();
+    }
+
+    _isOnBoard(clientX, clientY) {
+        const {width, height, top, right, bottom, left} = this.state.boardDimensions;
+        return (clientX > left && clientX < right && clientY > top && clientY < bottom);
+    }
+
+    _getCoordsFromClientXY(clientX, clientY) {
+        if (!this._isOnBoard(clientX, clientY)) { return []; }
+
+        const {width, height, top, right, bottom, left} = this.state.boardDimensions;
+        let tdWidth = width / this.state.board.sizeX;
+        let tdHeight = height / this.state.board.sizeY;
+        let boardX = clientX - left;
+        let boardY = clientY - top;
+
+        let cellX = Math.floor(boardX / tdWidth);
+        let cellY = Math.floor(boardY / tdHeight);
+
+        return [cellX, cellY];
     }
 
     markWord(wordStr, allowUnmark = false) {
@@ -252,67 +320,72 @@ export default class Game extends React.Component<GameProps, GameState> {
         };
 
         return (
-            <div className={`${B}`}>
+            <Measure
+                bounds={true}
+                onResize={(contentRect) => {
+                    this.setState({ boardDimensions: contentRect.bounds });
+                }}
+            >
+            {({ measure, measureRef, contentRect }) => (
+                <div
+                    className={`${B}`}
 
-                <Header
-                    wordsCound={this.words.length}
-                    markedCount={Object.keys(this.state.board.marks).length}
-                    title={this.title}
-                    elapsed={config.timeLimitSeconds - this.state.elapsed}
-                    finishGame={this.finishGame}
-                    isFinished={this.state.isFinished}
-                    {...this.props}
-                />
+                    onMouseDown={this._onMouseDown}
+                    onMouseUp={this._onMouseUp}
+                    onMouseMove={this._onMouseMove}
 
-                <div className={`${B}-board`}>
-                    <span>
-                        {JSON.stringify(this.state._debug, null, '  ')}
-                    </span>
-                    <table className={`${B}-table`}>
-                        <tbody
-                            onTouchStart={this._onTouchStart}
-                            onTouchEnd={this._onTouchEnd}
-                            onTouchMove={this._onTouchMove}
-                        >
-                    {
-                        board.board.map((row, y) => {
-                            let tds = row.map((char, x) => {
-                                let cls = [];
-                                if (isMarked(x, y)) { cls.push('_marked'); }
-                                if (isBeingSelected(x, y)) { cls.push('_selected'); }
+                    onTouchStart={this._onTouchStart}
+                    onTouchEnd={this._onTouchEnd}
+                    onTouchMove={this._onTouchMove}
+                >
+
+                    <Header
+                        wordsCound={this.words.length}
+                        markedCount={Object.keys(this.state.board.marks).length}
+                        title={this.title}
+                        elapsed={config.timeLimitSeconds - this.state.elapsed}
+                        finishGame={this.finishGame}
+                        isFinished={this.state.isFinished}
+                        {...this.props}
+                    />
+
+                    <div className={`${B}-board`}>
+                        <table className={`${B}-table`}>
+                            <tbody ref={measureRef}>
+                        {
+                            board.board.map((row, y) => {
+                                let tds = row.map((char, x) => {
+                                    let cls = [];
+                                    if (isMarked(x, y)) { cls.push('_marked'); }
+                                    if (isBeingSelected(x, y)) { cls.push('_selected'); }
+                                    return (
+                                        <td
+                                            key={`td-${y}-${x}`}
+                                            className={cls.join(' ')}
+                                        >
+                                            {this.renderVisual(char)}
+                                        </td>
+                                    );
+                                });
                                 return (
-                                    <td
-                                        key={`td-${y}-${x}`}
-                                        className={cls.join(' ')}
-
-                                        onMouseDown={this.handleTdDragStart}
-                                        onMouseUp={this.handleTdDragLeave}
-                                        onMouseOver={this.handleTdMouseOver}
-
-                                        data-x={x}
-                                        data-y={y}
-                                    >
-                                        {this.renderVisual(char)}
-                                    </td>
+                                    <tr key={`tr-${y}`}>{tds}</tr>
                                 );
-                            });
-                            return (
-                                <tr key={`tr-${y}`}>{tds}</tr>
-                            );
-                        })
-                    }
-                        </tbody>
-                    </table>
+                            })
+                        }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <Footer
+                        words={this.words}
+                        board={this.state.board}
+                        markWord={this.markWord}
+                        {...this.props}
+                    />
+
                 </div>
-
-                <Footer
-                    words={this.words}
-                    board={this.state.board}
-                    markWord={this.markWord}
-                    {...this.props}
-                />
-
-            </div>
+            )}
+            </Measure>
         );
 
     }

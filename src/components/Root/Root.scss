@@ -8,5 +8,9 @@
   &-selector {
     height: 100%;
     @include flexrow-container;
+
+    button {
+      background: lighten($color-saris, 35%);
+    }
   }
 }

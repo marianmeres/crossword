@@ -9,7 +9,7 @@ interface RootState {
     selectedValue: number;
 }
 
-export default class Root extends React.Component<{}, RootState> {
+export default class Root extends React.Component<any, RootState> {
 
     state: RootState = {
         crosswordIdx: null,

@@ -43,6 +43,7 @@ export default class Footer extends React.Component<FooterProps, {}> {
                                     key={word}
                                     value={word}
                                     onClick={this.handleWordButtonClick}
+                                    disabled={true}
                                 >
                                     {renderVisual(word)}
                                 </button>
