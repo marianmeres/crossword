@@ -23,7 +23,9 @@ button {
 }
 
 html {
-  height: 100%;
+  position: fixed; // aby ipad nemovoval cele body...
+  height: 100vh;
+  width: 100%;
 }
 
 body {

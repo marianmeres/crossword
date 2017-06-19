@@ -13,7 +13,7 @@
 
   &-board {
     flex: 1;
-    @include flexrow-container;
+    @include flexcolumn-container;
     width: 100%;
     //background: silver;
   }

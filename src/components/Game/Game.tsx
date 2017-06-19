@@ -24,6 +24,7 @@ interface GameState {
     selectedCoords: number[][];
     isFinished: boolean;
     elapsed: number;
+    _debug: {};
 }
 
 export default class Game extends React.Component<GameProps, GameState> {
@@ -34,6 +35,7 @@ export default class Game extends React.Component<GameProps, GameState> {
         selectedCoords: [],
         isFinished: false,
         elapsed: 0,
+        _debug: {},
     };
 
     dragStartX = null;
@@ -62,6 +64,12 @@ export default class Game extends React.Component<GameProps, GameState> {
         this.handleTdMouseOver = this.handleTdMouseOver.bind(this);
         this.handleTdDragStart = this.handleTdDragStart.bind(this);
         this.handleTdDragLeave = this.handleTdDragLeave.bind(this);
+
+
+        this._onTouchStart = this._onTouchStart.bind(this);
+        this._onTouchEnd = this._onTouchEnd.bind(this);
+        this._onTouchMove = this._onTouchMove.bind(this);
+
         this.finishGame = this.finishGame.bind(this);
         this.markWord = this.markWord.bind(this);
     }
@@ -148,6 +156,37 @@ export default class Game extends React.Component<GameProps, GameState> {
         this.setState({ selectedCoords });
     }
 
+    _onTouchStart(e) {
+        this.setState({
+            _debug: {
+                x: e.touches[0].clientX,
+                y: e.touches[0].clientY,
+            }
+        });
+    }
+
+    _onTouchEnd(e) {
+        this.setState({_debug: null});
+    }
+
+    _onTouchMove(e) {
+        // console.log(e);
+        // clientX: X coordinate of touch relative to the viewport (excludes scroll offset)
+        // clientY: Y coordinate of touch relative to the viewport (excludes scroll offset)
+        // screenX: Relative to the screen
+        // screenY: Relative to the screen
+        // pageX: Relative to the full page (includes scrolling)
+        // pageY: Relative to the full page (includes scrolling)
+        // target: Node the touch event originated from
+        // identifier: An identifying number, unique to each touch event
+        let keys = ['clientX', 'clientY', 'screenX', 'screenY', 'pageX', 'pageY'];
+        let dbg = {};
+        keys.forEach((k) => dbg[k] = e.touches[0][k]);
+        this.setState({
+            _debug: dbg
+        });
+    }
+
     markWord(wordStr, allowUnmark = false) {
 
         // ak sme skoncili, tak uz nic
@@ -226,7 +265,15 @@ export default class Game extends React.Component<GameProps, GameState> {
                 />
 
                 <div className={`${B}-board`}>
-                    <table className={`${B}-table`}><tbody>
+                    <span>
+                        {JSON.stringify(this.state._debug, null, '  ')}
+                    </span>
+                    <table className={`${B}-table`}>
+                        <tbody
+                            onTouchStart={this._onTouchStart}
+                            onTouchEnd={this._onTouchEnd}
+                            onTouchMove={this._onTouchMove}
+                        >
                     {
                         board.board.map((row, y) => {
                             let tds = row.map((char, x) => {
@@ -237,9 +284,11 @@ export default class Game extends React.Component<GameProps, GameState> {
                                     <td
                                         key={`td-${y}-${x}`}
                                         className={cls.join(' ')}
-                                        onMouseOver={this.handleTdMouseOver}
+
                                         onMouseDown={this.handleTdDragStart}
                                         onMouseUp={this.handleTdDragLeave}
+                                        onMouseOver={this.handleTdMouseOver}
+
                                         data-x={x}
                                         data-y={y}
                                     >
@@ -252,7 +301,8 @@ export default class Game extends React.Component<GameProps, GameState> {
                             );
                         })
                     }
-                    </tbody></table>
+                        </tbody>
+                    </table>
                 </div>
 
                 <Footer
