@@ -35,6 +35,9 @@
     margin-right: 3em;
     color: #fbbdb4;
     float: left; }
+    .cross-game-header-clock._finished {
+      color: white;
+      font-weight: bold; }
   .cross-game-header-hits {
     display: inline-block;
     line-height: 1;

@@ -259,7 +259,7 @@ export default class Game extends React.Component<GameProps, GameState> {
 
         // ak sme skoncili, tak uz nic
         if (this.state.isFinished) {
-            return alert('Čas vypršal');
+            return; // alert('Čas vypršal');
         }
 
         let found = this.state.board.find(wordStr);

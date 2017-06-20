@@ -32,7 +32,14 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-image: radial-gradient(
-    lighten($color-saris, 5%), darken($color-saris, 15%)
-  );
+  width: 100%;
+  position: absolute;
+  overflow: hidden;
+  //background: radial-gradient(
+  //  lighten($color-saris, 5%), darken($color-saris, 15%)
+  //);
+
+  //background-color: $color-saris;
+  //background-size: cover;
+  background-image: url(./img/bg.jpg);
 }

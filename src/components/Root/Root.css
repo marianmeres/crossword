@@ -4,9 +4,12 @@
   .cross-root-selector {
     height: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: nowrap;
     justify-content: center;
     align-items: center; }
+    .cross-root-selector img {
+      margin-bottom: 2em; }
     .cross-root-selector button {
-      background: #faa79c; }
+      background: white;
+      color: black; }

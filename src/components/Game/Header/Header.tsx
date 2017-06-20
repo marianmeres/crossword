@@ -21,10 +21,12 @@ export default class Header extends React.Component<HeaderProps, {}> {
         let elapsed = Math.max(0, this.props.elapsed);
         let time = hms(elapsed);
 
+        let cls = elapsed ? '' : ' _finished';
+
         return (
             <div className={B}>
                 <div className={`${B}-left`}>
-                    <span className={`${B}-clock`}>{time.m}:{time.s}</span>
+                    <span className={`${B}-clock ${cls}`}>{time.m}:{time.s}</span>
                 </div>
                 <div className={`${B}-center`}>
                     <h1

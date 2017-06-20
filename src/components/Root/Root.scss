@@ -7,10 +7,15 @@
 
   &-selector {
     height: 100%;
-    @include flexrow-container;
+    @include flexcolumn-container;
+
+    img {
+      margin-bottom: 2em;
+    }
 
     button {
-      background: lighten($color-saris, 35%);
+      background: white;
+      color: black;
     }
   }
 }

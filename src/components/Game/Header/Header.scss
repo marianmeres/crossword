@@ -52,6 +52,12 @@
     margin-right: 3em;
     color: lighten($color-saris, 40%);
     float: left;
+
+    &._finished {
+
+      color: white;
+      font-weight: bold;
+    }
   }
 
   &-hits {

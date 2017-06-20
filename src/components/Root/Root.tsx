@@ -4,6 +4,8 @@ import {config} from '../../config';
 import './Root.css';
 import Game from '../Game/Game';
 
+// import logo from '../../img/logo.png';
+
 interface RootState {
     crosswordIdx: number;
     selectedValue: number;
@@ -80,6 +82,9 @@ export default class Root extends React.Component<any, RootState> {
         return (
             <div className={`${B}`}>
                 <div className={`${B}-selector`}>
+
+                    <img src={process.env.PUBLIC_URL + '/logo.png'} alt=""/>
+
                     <select
                         className="custom-select"
                         value={this.state.selectedValue}
@@ -93,7 +98,7 @@ export default class Root extends React.Component<any, RootState> {
                         games.map((cfg, idx) => {
                             return (
                                 <option key={idx} value={idx}>
-                                    {cfg.title}
+                                    {cfg.title} ({cfg.words.length})
                                 </option>
                             );
                             // return (
