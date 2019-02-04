@@ -9,14 +9,14 @@
     "jsx": "react",
     "moduleResolution": "node",
     "rootDir": "src",
-    //    "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noImplicitAny": false
-    //    "strictNullChecks": true,
-    //    "suppressImplicitAnyIndexErrors": true,
-    //    "noUnusedLocals": true
+    "noImplicitAny": false,
+    "baseUrl": "."
   },
+  "include": [
+    "src"
+  ],
   "exclude": [
     "node_modules",
     "build",

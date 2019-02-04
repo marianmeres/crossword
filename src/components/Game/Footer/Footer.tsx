@@ -1,10 +1,10 @@
 import * as React from 'react';
 
 import './Footer.css';
-import {config} from '../../../config';
-import {GameProps, renderVisual} from '../Game';
-import {Board} from '../../../_lib/crossword/Board';
-import {render} from 'react-dom';
+import { config } from '../../../config';
+import { GameProps, renderVisual } from '../Game';
+import { Board } from '../../../_lib/crossword/Board';
+import { render } from 'react-dom';
 
 interface FooterProps extends GameProps {
     board: Board;
@@ -43,7 +43,7 @@ export default class Footer extends React.Component<FooterProps, {}> {
                                     key={word}
                                     value={word}
                                     onClick={this.handleWordButtonClick}
-                                    disabled={true}
+                                    disabled={false}
                                 >
                                     {renderVisual(word)}
                                 </button>

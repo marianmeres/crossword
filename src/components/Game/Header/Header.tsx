@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import './Header.css';
-import {config} from '../../../config';
-import {GameProps} from '../Game';
+import { config } from '../../../config';
+import { GameProps } from '../Game';
 
 interface HeaderProps extends GameProps {
     elapsed: number;

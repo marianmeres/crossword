@@ -1,10 +1,10 @@
 import * as React from 'react';
 import Measure from 'react-measure';
 
-import {config} from '../../config';
+import { config } from '../../config';
 
 import './Game.css';
-import {Board} from '../../_lib/crossword/Board';
+import { Board } from '../../_lib/crossword/Board';
 import Header from './Header/Header';
 import Footer from './Footer/Footer';
 

@@ -121,9 +121,9 @@ export class Board {
             return (str + '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
         };
         // early skip dead ends (if hint provided)
-        let _substrMatch = (chars: string[], expected): boolean => {
+        let _substrMatch = (_chars: string[], expected): boolean => {
             if (!expected) { return true; }
-            return  (new RegExp(`^${_escRgx(chars.join(''))}`, 'i')).test(expected);
+            return  (new RegExp(`^${_escRgx(_chars.join(''))}`, 'i')).test(expected);
         };
 
         let coordinates = [];
