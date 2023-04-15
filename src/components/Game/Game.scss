@@ -47,7 +47,7 @@
       font-weight: bold;
       user-select: none;
       cursor: pointer;
-      font-family: $font-family-monospace;;
+      font-family: $font-family-monospace;
 
       &._marked {
         background: darken($color-saris, 15%);

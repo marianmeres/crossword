@@ -89,6 +89,7 @@ export default class Root extends React.Component<any, RootState> {
                         className="custom-select"
                         value={this.state.selectedValue}
                         onChange={this.handleSelectChange}
+                        style={{maxWidth: '400px'}}
                     >
                         <option key={-1} value={-1}>
                             Náhodná osemsmerovka

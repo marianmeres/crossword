@@ -7,18 +7,20 @@
     "@types/node": "^7.0.29",
     "@types/react": "^15.0.27",
     "@types/react-dom": "^15.5.0",
-    "bootstrap": "4.0.0-alpha.6",
+    "bootstrap": "^4.2.0",
     "node-sass-chokidar": "^0.0.2",
     "npm-run-all": "^4.0.2",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "react-measure": "^2.0.2"
+    "react-measure": "^2.0.2",
+    "sass": "^1.62.0"
   },
   "devDependencies": {
     "react-scripts-ts": "^2.2.0"
   },
   "scripts": {
-    "build-css": "node-sass-chokidar src/ -o src/",
+    "xxx-build-css": "node-sass-chokidar src/ -o src/",
+    "build-css": "sass src/:src/ --no-source-map",
     "watch-css": "npm run build-css && node-sass-chokidar --include-path ./src src/ -o src/ --watch --recursive",
     "start-js": "react-scripts-ts start",
     "start": "npm-run-all -p watch-css start-js",
